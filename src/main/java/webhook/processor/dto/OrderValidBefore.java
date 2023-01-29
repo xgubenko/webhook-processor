@@ -15,7 +15,4 @@ public class OrderValidBefore {
 
     //Time validation for order Установка временных рамок действия заявки
     private OrderValidBeforeType type;
-
-    //Time of order registration on the server in UTC Время, когда заявка была зарегистрирована на сервере. В UTC
-    private LocalDateTime time;
 }
