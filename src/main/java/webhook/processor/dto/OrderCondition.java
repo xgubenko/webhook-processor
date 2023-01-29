@@ -14,5 +14,4 @@ import java.time.LocalDateTime;
 public class OrderCondition {
     private OrderConditionType type;
     private Double price;
-    private LocalDateTime time;
 }
