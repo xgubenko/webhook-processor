@@ -68,7 +68,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         order.setPrice(null);
         order.setProperty(OrderPlacement.PutInQueue);
 
-        OrderCondition condition = new OrderCondition(OrderConditionType.Bid, null);
+        OrderCondition condition = new OrderCondition(OrderConditionType.Bid, 0.0);
         order.setCondition(condition);
 
         OrderValidBefore validBefore = new OrderValidBefore(OrderValidBeforeType.TillEndSession);
