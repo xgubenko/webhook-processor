@@ -23,7 +23,7 @@ public class WebhookControllerImpl implements WebhookController {
     }
 
     @Override
-    @GetMapping
+    @PostMapping("/token")
     public ResponseEntity<Object> checkToken(@RequestBody TradingViewRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.checkToken(request));
     }
