@@ -24,7 +24,7 @@ public class WebhookControllerImpl implements WebhookController {
     }
 
     @Override
-    @PostMapping(value="/token", consumes="text/plain")
+    @PostMapping(value="/token", consumes="text/plain;charset=UTF-8")
     public ResponseEntity<Object> checkToken(@RequestBody String request) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.checkToken(initRequest(request)));
     }
