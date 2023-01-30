@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import webhook.processor.controller.WebhookController;
 import webhook.processor.dto.TradingViewRequest;
+import webhook.processor.dto.TransactionDirection;
 import webhook.processor.service.FinamOrderService;
 
 @RestController
@@ -16,15 +17,32 @@ public class WebhookControllerImpl implements WebhookController {
     private final FinamOrderService orderService;
 
     @Override
-    @PostMapping
-    public ResponseEntity<Object> createNewOrder(@RequestBody TradingViewRequest request) {
-        orderService.process(request);
+    @PostMapping(consumes="text/plain")
+    public ResponseEntity<Object> createNewOrder(@RequestBody String request) {
+        orderService.process(initRequest(request));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @Override
-    @PostMapping("/token")
-    public ResponseEntity<Object> checkToken(@RequestBody TradingViewRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.checkToken(request));
+    @PostMapping(value="/token", consumes="text/plain")
+    public ResponseEntity<Object> checkToken(@RequestBody String request) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.checkToken(initRequest(request)));
+    }
+
+    private TradingViewRequest initRequest(String s) {
+        TradingViewRequest  request = new TradingViewRequest();
+
+        //clientId api code quantity direction
+        String[] arr = s.split(" ");
+
+        request.setClientId(arr[0]);
+        request.setApi(arr[1]);
+        request.setCode(arr[2]);
+        request.setQuantity(Integer.parseInt(arr[3]));
+
+        if(arr[4].equals("buy")) request.setDirection(TransactionDirection.Buy);
+        else request.setDirection(TransactionDirection.Sell);
+
+        return request;
     }
 }
