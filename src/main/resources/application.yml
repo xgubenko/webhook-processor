@@ -6,3 +6,4 @@ server:
     key-store-password: "111111"
     key-alias: "baeldung"
     enabled: true
+  port: 443
