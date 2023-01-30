@@ -55,7 +55,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
     private NewOrder initOrder(TradingViewRequest request) {
         NewOrder order = new NewOrder();
         order.setClientId(request.getClientId());
-        order.setBoard(null);
+        order.setBoard("FUT");
 
         //SiH3
         order.setSecurityCode(request.getCode());
