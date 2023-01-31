@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 @Service
 @Slf4j
 public class BinanceOrderServiceImpl implements BinanceOrderService {
+
+    private Boolean TRADING_IN_PROGRESS = false;
     @Override
     public void process(BinanceTradingViewRequest request) {
         log.info("Start processing request: {}", request);
@@ -30,7 +32,10 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("side", request.getDirection());
         parameters.put("type", "MARKET");
         parameters.put("timeInForce", "GTC");
-        parameters.put("quantity", request.getQuantity());
+
+        double quantity = request.getQuantity();
+        if(TRADING_IN_PROGRESS) quantity  = quantity * 2;
+        parameters.put("quantity", quantity);
 
         String result = client.createTrade().testNewOrder(parameters);
 
