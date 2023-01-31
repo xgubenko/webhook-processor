@@ -1,5 +1,5 @@
 package webhook.processor.dto;
 
-public enum TransactionDirection {
+public enum FinamTransactionDirection {
     Sell, Buy
 }
