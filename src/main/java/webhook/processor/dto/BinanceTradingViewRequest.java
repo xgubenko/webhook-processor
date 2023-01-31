@@ -11,7 +11,7 @@ public class BinanceTradingViewRequest {
     private String api;
     private String code;
     private Double quantity;
-    private BinanceTransactionDirection direction;
+    private String direction;
     private String secret;
 
     @Override
