@@ -1,9 +1,6 @@
 package webhook.processor.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
 
@@ -32,6 +29,7 @@ Order example:
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewOrder {
@@ -46,7 +44,7 @@ public class NewOrder {
     private String securityCode;
 
     //Transaction direction Направление сделки
-    private TransactionDirection buySell;
+    private FinamTransactionDirection buySell;
 
     //Order volume in lots Количество лотов инструмента для заявки
     private int quantity;

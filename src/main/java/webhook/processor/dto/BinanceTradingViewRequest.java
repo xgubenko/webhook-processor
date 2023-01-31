@@ -6,17 +6,17 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TradingViewRequest {
+public class BinanceTradingViewRequest {
     private String clientId;
     private String api;
     private String code;
-    private Integer quantity;
-    private FinamTransactionDirection direction;
+    private Double quantity;
+    private BinanceTransactionDirection direction;
     private String secret;
 
     @Override
     public String toString() {
-        return "TradingViewRequest{" +
+        return "BinanceTradingViewRequest{" +
                 "clientId='" + clientId + '\'' +
                 ", code='" + code + '\'' +
                 ", quantity=" + quantity +
