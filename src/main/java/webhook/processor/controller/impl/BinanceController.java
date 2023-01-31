@@ -37,8 +37,8 @@ public class BinanceController {
         request.setCode(arr[2]);
         request.setQuantity(Double.parseDouble(arr[3]));
 
-        if(arr[4].equals("buy")) request.setDirection(BinanceTransactionDirection.BUY);
-        else request.setDirection(BinanceTransactionDirection.SELL);
+        if(arr[4].equals("buy")) request.setDirection("BUY");
+        else request.setDirection("SELL");
 
         request.setSecret(arr[5]);
 
