@@ -34,7 +34,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 //        parameters.put("timeInForce", "GTC");
 
         double quantity = request.getQuantity();
-        if(TRADING_IN_PROGRESS) quantity  = quantity * 2;
+//        if(TRADING_IN_PROGRESS) quantity  = quantity * 2;
         parameters.put("quantity", quantity);
 
         String result = client.createTrade().newOrder(parameters);
