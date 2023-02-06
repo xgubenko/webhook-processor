@@ -4,19 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import webhook.processor.dto.*;
 import webhook.processor.service.FinamOrderService;
 
-import java.time.LocalDateTime;
-
 @Slf4j
 @Service
 public class FinamOrderServiceImpl implements FinamOrderService {
-
-    private Boolean TRADING_IN_PROGRESS = false;
 
     @Override
     public void process(TradingViewRequest request) {
@@ -29,8 +24,6 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         log.info("Sending new order request");
         String result = sendOrder(order, request);
         log.info("Order sent with result: {}", result);
-
-        TRADING_IN_PROGRESS = true;
     }
 
     @Override
@@ -55,15 +48,14 @@ public class FinamOrderServiceImpl implements FinamOrderService {
     private NewOrder initOrder(TradingViewRequest request) {
         NewOrder order = new NewOrder();
         order.setClientId(request.getClientId());
-        order.setBoard("FUT");
+
+        //TQBR - акции мосбиржи, FUT- фьючерсы
+        order.setBoard("TQBR");
 
         //SiH3
         order.setSecurityCode(request.getCode());
         order.setBuySell(request.getDirection());
-
-        int quantity = request.getQuantity();
-        if(TRADING_IN_PROGRESS) order.setQuantity(quantity * 2);
-        else order.setQuantity(quantity);
+        order.setQuantity(request.getQuantity());
 
         order.setPrice(null);
         order.setProperty(OrderPlacement.PutInQueue);
