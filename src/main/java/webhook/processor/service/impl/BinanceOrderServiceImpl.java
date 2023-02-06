@@ -31,7 +31,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("symbol", request.getCode());
         parameters.put("side", request.getDirection());
         parameters.put("type", "MARKET");
-        parameters.put("timeInForce", "GTC");
+//        parameters.put("timeInForce", "GTC");
 
         double quantity = request.getQuantity();
         if(TRADING_IN_PROGRESS) quantity  = quantity * 2;
