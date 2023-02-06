@@ -37,7 +37,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         if(TRADING_IN_PROGRESS) quantity  = quantity * 2;
         parameters.put("quantity", quantity);
 
-        String result = client.createTrade().testNewOrder(parameters);
+        String result = client.createTrade().newOrder(parameters);
 
         System.out.println(result);
     }
