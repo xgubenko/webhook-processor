@@ -1,6 +1,7 @@
 package webhook.processor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,9 @@ import webhook.processor.service.FinamOrderService;
 @Slf4j
 @Service
 public class FinamOrderServiceImpl implements FinamOrderService {
+
+    @Value("${running}")
+    private volatile Boolean running;
 
     @Override
     public void process(TradingViewRequest request) {
@@ -38,7 +42,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
 
         String response = restTemplate.exchange(
-                "https://trade-api.comon.ru/api/v1/access-tokens/check", HttpMethod.GET, requestEntity, String.class).getBody();
+                    "https://trade-api.finam.ru/api/v1/access-tokens/check", HttpMethod.GET, requestEntity, String.class).getBody();
 
         log.info("Response for token check: {}", response);
 
@@ -50,12 +54,19 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         order.setClientId(request.getClientId());
 
         //TQBR - акции мосбиржи, FUT- фьючерсы
-        order.setBoard("TQBR");
+        order.setSecurityBoard("FUT");
 
         //SiH3
         order.setSecurityCode(request.getCode());
         order.setBuySell(request.getDirection());
-        order.setQuantity(request.getQuantity());
+
+        Integer quantity = request.getQuantity();
+        if(!running) {
+            running = true;
+        } else {
+            quantity *=2;
+        }
+        order.setQuantity(quantity);
 
         order.setPrice(null);
         order.setProperty(OrderPlacement.PutInQueue);
@@ -77,7 +88,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
 
         HttpEntity<NewOrder> newOrderHttpEntity = new HttpEntity<>(order, headers);
 
-        restTemplate.postForEntity("https://trade-api.comon.ru/api/v1/orders", newOrderHttpEntity, NewOrder.class);
+        restTemplate.postForEntity("https://trade-api.finam.ru/api/v1/orders", newOrderHttpEntity, NewOrder.class);
         return "OK";
     }
 }
