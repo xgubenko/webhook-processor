@@ -13,6 +13,8 @@ import webhook.processor.service.FinamOrderService;
 @Service
 public class FinamOrderServiceImpl implements FinamOrderService {
 
+    private volatile Boolean running = false;
+
     @Override
     public void process(TradingViewRequest request) {
         log.info("Request processing started: {}", request);
@@ -55,7 +57,14 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         //SiH3
         order.setSecurityCode(request.getCode());
         order.setBuySell(request.getDirection());
-        order.setQuantity(request.getQuantity());
+
+        Integer quantity = request.getQuantity();
+        if(!running) {
+            running = true;
+        } else {
+            quantity *=2;
+        }
+        order.setQuantity(quantity);
 
         order.setPrice(null);
         order.setProperty(OrderPlacement.PutInQueue);
