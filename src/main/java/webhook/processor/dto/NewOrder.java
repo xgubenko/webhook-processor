@@ -38,7 +38,7 @@ public class NewOrder {
     private String clientId;
 
     //Trading Board Режим торгов
-    private String board;
+    private String securityBoard;
 
     //Security Code Тикер инструмента
     private String securityCode;
