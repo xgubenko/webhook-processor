@@ -40,7 +40,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
 
         String response = restTemplate.exchange(
-                "https://trade-api.comon.ru/api/v1/access-tokens/check", HttpMethod.GET, requestEntity, String.class).getBody();
+                    "https://trade-api.finam.ru/api/v1/access-tokens/check", HttpMethod.GET, requestEntity, String.class).getBody();
 
         log.info("Response for token check: {}", response);
 
@@ -52,7 +52,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         order.setClientId(request.getClientId());
 
         //TQBR - акции мосбиржи, FUT- фьючерсы
-        order.setBoard("TQBR");
+        order.setSecurityBoard("FUT");
 
         //SiH3
         order.setSecurityCode(request.getCode());
@@ -86,7 +86,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
 
         HttpEntity<NewOrder> newOrderHttpEntity = new HttpEntity<>(order, headers);
 
-        restTemplate.postForEntity("https://trade-api.comon.ru/api/v1/orders", newOrderHttpEntity, NewOrder.class);
+        restTemplate.postForEntity("https://trade-api.finam.ru/api/v1/orders", newOrderHttpEntity, NewOrder.class);
         return "OK";
     }
 }
