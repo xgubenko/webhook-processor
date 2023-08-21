@@ -15,6 +15,7 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -49,7 +50,7 @@ public class Mail {
             String from = Arrays.stream(message.getFrom()).toList().get(0).toString();
             log.info(from);
             if (from.contains(tvEmail)) {
-                try{
+                try {
                     log.info("Subject: {}", message.getSubject());
                     String messageText = message.getContent().toString().split("DELIMITER")[1];
                     log.info(messageText);
@@ -63,7 +64,7 @@ public class Mail {
             }
             message.setFlag(Flags.Flag.DELETED, true);
         }
-        System.out.println(messages.length);
+        log.info("Time: {}, number of messages received: {}", Instant.now(), messages.length);
         // close folder and store
         inbox.close(false);
         store.close();
@@ -81,8 +82,8 @@ public class Mail {
     }
 
     private TradingViewRequest initRequest(String s) {
-        TradingViewRequest  request = new TradingViewRequest();
-        log.info("initRequest: {}", s);
+        TradingViewRequest request = new TradingViewRequest();
+        log.info("Time: {}, initRequest: {}", Instant.now(), s);
         //clientId api code quantity direction
         String[] arr = s.split(" ");
 
@@ -91,7 +92,7 @@ public class Mail {
         request.setCode(arr[2]);
         request.setQuantity(Integer.parseInt(arr[3]));
 
-        if(arr[4].equals("buy")) request.setDirection(FinamTransactionDirection.Buy);
+        if (arr[4].equals("buy")) request.setDirection(FinamTransactionDirection.Buy);
         else request.setDirection(FinamTransactionDirection.Sell);
 
         return request;
