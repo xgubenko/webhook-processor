@@ -8,6 +8,7 @@ server:
 #    enabled: true
   port: 8081
 
+running: false
 email: ${EMAIL:vrnpass8@gmail.com}
 password: ${PASS:pass}
 from: "TradingView <noreply@tradingview.com>"

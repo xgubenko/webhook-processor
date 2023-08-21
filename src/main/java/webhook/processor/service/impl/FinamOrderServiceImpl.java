@@ -1,6 +1,7 @@
 package webhook.processor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,7 +14,8 @@ import webhook.processor.service.FinamOrderService;
 @Service
 public class FinamOrderServiceImpl implements FinamOrderService {
 
-    private volatile Boolean running = false;
+    @Value("${running}")
+    private volatile Boolean running;
 
     @Override
     public void process(TradingViewRequest request) {
