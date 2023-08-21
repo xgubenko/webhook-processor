@@ -64,7 +64,7 @@ public class Mail {
             }
             message.setFlag(Flags.Flag.DELETED, true);
         }
-        log.info("Time: {}, number of messages received: {}", Instant.now(), messages.length);
+//        log.info("Time: {}, number of messages received: {}", Instant.now(), messages.length);
         // close folder and store
         inbox.close(false);
         store.close();
