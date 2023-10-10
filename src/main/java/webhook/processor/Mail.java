@@ -38,7 +38,7 @@ public class Mail {
 
     @Scheduled(fixedDelay = 10000)
     private void scheduleMail() throws Exception {
-
+        log.info("scheduleMail() was called");
         Store store = getSession().getStore();
         store.connect(email, password);
         Folder inbox = store.getFolder("INBOX");
