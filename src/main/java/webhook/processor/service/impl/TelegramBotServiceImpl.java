@@ -35,6 +35,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         TelegramBotServiceImpl test_habr_bot = new TelegramBotServiceImpl();
         test_habr_bot.setUsername(username);
         test_habr_bot.setToken(token);
+        test_habr_bot.setChatId(chatId);
         try {
             test_habr_bot.botConnect();
         } catch (TelegramApiException e) {
