@@ -7,7 +7,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import webhook.processor.dto.*;
+import webhook.processor.dto.NewOrder;
+import webhook.processor.dto.OrderCondition;
+import webhook.processor.dto.OrderConditionType;
+import webhook.processor.dto.OrderPlacement;
+import webhook.processor.dto.OrderValidBefore;
+import webhook.processor.dto.OrderValidBeforeType;
+import webhook.processor.dto.TradingViewRequest;
 import webhook.processor.service.FinamOrderService;
 
 @Slf4j
@@ -16,6 +22,15 @@ public class FinamOrderServiceImpl implements FinamOrderService {
 
     @Value("${running}")
     private volatile Boolean running;
+
+    @Value("${finam.host}")
+    private String finamHost;
+
+    private final TelegramBotServiceImpl telegramBotService;
+
+    public FinamOrderServiceImpl(TelegramBotServiceImpl telegramBotService) {
+        this.telegramBotService = telegramBotService;
+    }
 
     @Override
     public void process(TradingViewRequest request) {
@@ -42,7 +57,7 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
 
         String response = restTemplate.exchange(
-                    "https://trade-api.finam.ru/api/v1/access-tokens/check", HttpMethod.GET, requestEntity, String.class).getBody();
+                finamHost + "/api/v1/access-tokens/check", HttpMethod.GET, requestEntity, String.class).getBody();
 
         log.info("Response for token check: {}", response);
 
@@ -61,10 +76,10 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         order.setBuySell(request.getDirection());
 
         Integer quantity = request.getQuantity();
-        if(!running) {
+        if (!running) {
             running = true;
         } else {
-            quantity *=2;
+            quantity *= 2;
         }
         order.setQuantity(quantity);
 
@@ -88,7 +103,10 @@ public class FinamOrderServiceImpl implements FinamOrderService {
 
         HttpEntity<NewOrder> newOrderHttpEntity = new HttpEntity<>(order, headers);
 
-        restTemplate.postForEntity("https://trade-api.finam.ru/api/v1/orders", newOrderHttpEntity, NewOrder.class);
+        restTemplate.postForEntity(finamHost + "/api/v1/orders", newOrderHttpEntity, NewOrder.class);
+
+        telegramBotService.sendMessageToGroup(
+                request.getDirection().toString(), request.getCode(), request.getQuantity());
         return "OK";
     }
 }

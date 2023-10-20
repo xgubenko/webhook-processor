@@ -9,6 +9,12 @@ server:
   port: 8081
 
 running: true
-email: ${EMAIL:vrnpass8@gmail.com}
+email: ${EMAIL:email}
 password: ${PASS:pass}
 from: "TradingView <noreply@tradingview.com>"
+bot:
+  name: ${NAME:@name}
+  token: ${TOKEN:token}
+  chatid: ${CHATID:id}
+finam:
+  host: https://trade-api.finam.ru
