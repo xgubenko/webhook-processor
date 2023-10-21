@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 @Slf4j
 public class BinanceOrderServiceImpl implements BinanceOrderService {
 
-    private Boolean TRADING_IN_PROGRESS = false;
     @Override
     public void process(BinanceTradingViewRequest request) {
         log.info("Start processing request: {}", request);

@@ -20,9 +20,6 @@ import webhook.processor.service.FinamOrderService;
 @Service
 public class FinamOrderServiceImpl implements FinamOrderService {
 
-    @Value("${running}")
-    private volatile Boolean running;
-
     @Value("${finam.host}")
     private String finamHost;
 
@@ -76,11 +73,6 @@ public class FinamOrderServiceImpl implements FinamOrderService {
         order.setBuySell(request.getDirection());
 
         Integer quantity = request.getQuantity();
-        if (!running) {
-            running = true;
-        } else {
-            quantity *= 2;
-        }
         order.setQuantity(quantity);
 
         order.setPrice(null);

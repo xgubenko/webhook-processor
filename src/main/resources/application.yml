@@ -8,7 +8,6 @@ server:
 #    enabled: true
   port: 8081
 
-running: true
 email: ${EMAIL:email}
 password: ${PASS:pass}
 from: "TradingView <noreply@tradingview.com>"
