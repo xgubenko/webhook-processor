@@ -87,6 +87,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
     public void botConnect() throws TelegramApiException, ExecutionException, InterruptedException {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+        log.info(token + " " + username);
         try {
             telegramBotsApi.registerBot(this);
             log.info("TelegramAPI started. Look for messages");
