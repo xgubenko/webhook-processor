@@ -18,3 +18,5 @@ bot:
   chatid: ${CHATID:id}
 finam:
   host: https://trade-api.finam.ru
+  key: ${KEY:key}
+  id: ${CLIENTID:clientid}
