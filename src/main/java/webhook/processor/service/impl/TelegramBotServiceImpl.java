@@ -149,7 +149,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
             messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s\n" +
                             "Последняя цена: %s\n" +
                             "Средняя цена входа: %s\n" +
-                            "Изменение счета по сделке: %s",
+                            "Доходность сделки: %s",
                     position.getSecurityCode(),
                     position.getBalance(),
                     position.getCurrentPrice(),
