@@ -75,6 +75,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        log.info("onUpdateReceived called: {}", update);
         String text = update.getMessage().getText();
         String id = update.getMessage().getChatId().toString();
         SendMessage message = new SendMessage(id, text);
@@ -86,6 +87,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
     }
 
     public void botConnect() throws TelegramApiException, ExecutionException, InterruptedException {
+        log.info("botConnect start");
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
             telegramBotsApi.registerBot(this);
@@ -109,6 +111,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
     }
 
     public void sendMessageToGroup(String direction, String code, Integer amount) {
+        log.info("sendMessageToGroup call with parameters direction: {}, code: {}, amount: {}", direction, code, amount);
         SendMessage message = new SendMessage(chatId,
                 String.format("Актив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount));
         try {
