@@ -169,7 +169,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         execute(message);
     }
 
-    @Scheduled(cron = "0 05 0 * * 1-5")
+    @Scheduled(cron = "0 0 14 * * 6")
     private void scheduleTelegramProfitReport() throws Exception {
         log.info("scheduleTelegramProfitReport start");
         RestTemplate restTemplate = new RestTemplate();
