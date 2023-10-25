@@ -1,6 +1,5 @@
 package webhook.processor.service.impl;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
@@ -170,7 +169,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         execute(message);
     }
 
-    @Scheduled(cron = "0 45 23 * * 1-5")
+    @Scheduled(cron = "0 52 23 * * 1-5")
     private void scheduleTelegramProfitReport() throws Exception {
         log.info("scheduleTelegramProfitReport start");
         RestTemplate restTemplate = new RestTemplate();
@@ -201,11 +200,12 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         Long dayCount = ChronoUnit.DAYS.between(dateStart, LocalDateTime.now());
         Double yearApproximateProfit = (earnedPercents / dayCount) * 365;
 
-        StringBuilder messageText = new StringBuilder("Текущий баланс: " + String.format("%.02f", data.getEquity()));
+        StringBuilder messageText = new StringBuilder("Еженедельный отчет." +
+                "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity()));
         messageText.append("\nБаланс на момент публикации робота: ").append(String.format("%.02f", initialSum));
         messageText.append("\nЗаработано в рублях: ").append(String.format("%.02f", earnedRoubles));
         messageText.append("\nЗаработано в процентах: ").append(String.format("%.02f", earnedPercents));
-        messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit));
+        messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit)).append("%");
 
         if (!data.getPositions().isEmpty()) {
             messageText.append("\n\nОткрытые позиции:");
