@@ -147,7 +147,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
         BalanceData data = response.getData();
 
-        StringBuilder messageText = new StringBuilder("Текущий баланс: " + String.format("%.02f", data.getEquity()));
+        StringBuilder messageText = new StringBuilder("Текущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
 
         if (!data.getPositions().isEmpty()) {
             messageText.append("\n\nОткрытые позиции:");
@@ -160,16 +160,16 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
                             "Доходность сделки: %s",
                     position.getSecurityCode(),
                     position.getBalance(),
-                    String.format("%.02f", position.getCurrentPrice()),
-                    String.format("%.02f", position.getAveragePrice()),
-                    String.format("%.02f", position.getUnrealizedProfit())));
+                    String.format("%.02f", position.getCurrentPrice()) + "₽",
+                    String.format("%.02f", position.getAveragePrice()) + "₽",
+                    String.format("%.02f", position.getUnrealizedProfit()) + "₽"));
         }
 
         SendMessage message = new SendMessage(chatId, messageText.toString());
         execute(message);
     }
 
-    @Scheduled(cron = "0 58 23 * * 1-5")
+    @Scheduled(cron = "0 05 0 * * 1-5")
     private void scheduleTelegramProfitReport() throws Exception {
         log.info("scheduleTelegramProfitReport start");
         RestTemplate restTemplate = new RestTemplate();
@@ -200,9 +200,9 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         Long dayCount = ChronoUnit.DAYS.between(dateStart, LocalDateTime.now());
         Double yearApproximateProfit = (earnedPercents / dayCount) * 365;
 
-        StringBuilder messageText = new StringBuilder("Еженедельный отчет." +
-                "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity()));
-        messageText.append("\nБаланс на момент публикации робота: ").append(String.format("%.02f", initialSum));
+        StringBuilder messageText = new StringBuilder("Еженедельный отчет" +
+                "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
+        messageText.append("\nБаланс на момент публикации робота: ").append(String.format("%.02f", initialSum)).append("₽");
         messageText.append("\nЗаработано: ").append(String.format("%.02f", earnedRoubles)).append("₽, ")
                 .append(String.format("%.02f", earnedPercents)).append("%");
         messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit)).append("%");
@@ -218,9 +218,9 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
                             "Доходность сделки: %s",
                     position.getSecurityCode(),
                     position.getBalance(),
-                    String.format("%.02f", position.getCurrentPrice()),
-                    String.format("%.02f", position.getAveragePrice()),
-                    String.format("%.02f", position.getUnrealizedProfit())));
+                    String.format("%.02f", position.getCurrentPrice()) + "₽",
+                    String.format("%.02f", position.getAveragePrice()) + "₽",
+                    String.format("%.02f", position.getUnrealizedProfit()) + "₽"));
         }
 
         SendMessage message = new SendMessage(chatId, messageText.toString());
