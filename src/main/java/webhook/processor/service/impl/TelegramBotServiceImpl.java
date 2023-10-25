@@ -169,7 +169,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         execute(message);
     }
 
-    @Scheduled(cron = "0 52 23 * * 1-5")
+    @Scheduled(cron = "0 56 23 * * 1-5")
     private void scheduleTelegramProfitReport() throws Exception {
         log.info("scheduleTelegramProfitReport start");
         RestTemplate restTemplate = new RestTemplate();
@@ -203,8 +203,8 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         StringBuilder messageText = new StringBuilder("Еженедельный отчет." +
                 "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity()));
         messageText.append("\nБаланс на момент публикации робота: ").append(String.format("%.02f", initialSum));
-        messageText.append("\nЗаработано в рублях: ").append(String.format("%.02f", earnedRoubles));
-        messageText.append("\nЗаработано в процентах: ").append(String.format("%.02f", earnedPercents));
+        messageText.append("\nЗаработано: ").append(String.format("%.02f", earnedRoubles)).append("₽, ")
+                .append(String.format("%.02f", earnedPercents)).append("%");
         messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit)).append("%");
 
         if (!data.getPositions().isEmpty()) {
