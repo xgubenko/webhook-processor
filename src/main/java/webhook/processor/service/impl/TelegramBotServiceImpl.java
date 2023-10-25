@@ -148,7 +148,11 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
         BalanceData data = response.getData();
 
-        StringBuilder messageText = new StringBuilder("Текущий баланс: " + data.getEquity());
+        StringBuilder messageText = new StringBuilder("Текущий баланс: " + String.format("%.02f", data.getEquity()));
+
+        if (!data.getPositions().isEmpty()) {
+            messageText.append("\n\nОткрытые позиции:");
+        }
 
         for (Position position : data.getPositions()) {
             messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s\n" +
@@ -157,16 +161,16 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
                             "Доходность сделки: %s",
                     position.getSecurityCode(),
                     position.getBalance(),
-                    position.getCurrentPrice(),
-                    position.getAveragePrice(),
-                    position.getUnrealizedProfit()));
+                    String.format("%.02f", position.getCurrentPrice()),
+                    String.format("%.02f", position.getAveragePrice()),
+                    String.format("%.02f", position.getUnrealizedProfit())));
         }
 
         SendMessage message = new SendMessage(chatId, messageText.toString());
         execute(message);
     }
 
-    @Scheduled(cron = "0 34 23 * * 1-5")
+    @Scheduled(cron = "0 45 23 * * 1-5")
     private void scheduleTelegramProfitReport() throws Exception {
         log.info("scheduleTelegramProfitReport start");
         RestTemplate restTemplate = new RestTemplate();
@@ -190,19 +194,22 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
         Double initialSum = 45271.31;
         Double earnedRoubles = data.getEquity() - initialSum;
-        Double earnedPercents = (data.getEquity() - initialSum) / (initialSum / 100) ;
+        Double earnedPercents = (data.getEquity() - initialSum) / (initialSum / 100);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
         String dateText = "21 10 2023";
         LocalDateTime dateStart = LocalDate.parse(dateText, dtf).atStartOfDay();
         Long dayCount = ChronoUnit.DAYS.between(dateStart, LocalDateTime.now());
         Double yearApproximateProfit = (earnedPercents / dayCount) * 365;
 
-        StringBuilder messageText = new StringBuilder("Текущий баланс: " + data.getEquity());
-        messageText.append("\nБаланс на момент публикации робота: ").append(initialSum);
-        messageText.append("\nЗаработано в рублях: ").append(earnedRoubles);
-        messageText.append("\nЗаработано в процентах: ").append(earnedPercents);
-        messageText.append("\nОжидаемая годовая доходность: ").append(yearApproximateProfit);
+        StringBuilder messageText = new StringBuilder("Текущий баланс: " + String.format("%.02f", data.getEquity()));
+        messageText.append("\nБаланс на момент публикации робота: ").append(String.format("%.02f", initialSum));
+        messageText.append("\nЗаработано в рублях: ").append(String.format("%.02f", earnedRoubles));
+        messageText.append("\nЗаработано в процентах: ").append(String.format("%.02f", earnedPercents));
+        messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit));
 
+        if (!data.getPositions().isEmpty()) {
+            messageText.append("\n\nОткрытые позиции:");
+        }
 
         for (Position position : data.getPositions()) {
             messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s\n" +
@@ -211,9 +218,9 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
                             "Доходность сделки: %s",
                     position.getSecurityCode(),
                     position.getBalance(),
-                    position.getCurrentPrice(),
-                    position.getAveragePrice(),
-                    position.getUnrealizedProfit()));
+                    String.format("%.02f", position.getCurrentPrice()),
+                    String.format("%.02f", position.getAveragePrice()),
+                    String.format("%.02f", position.getUnrealizedProfit())));
         }
 
         SendMessage message = new SendMessage(chatId, messageText.toString());
