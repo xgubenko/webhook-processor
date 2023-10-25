@@ -1,5 +1,6 @@
 package webhook.processor.service.impl;
 
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,10 @@ import webhook.processor.dto.balance.BalanceData;
 import webhook.processor.dto.balance.BalanceResponse;
 import webhook.processor.dto.balance.Position;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -144,6 +149,60 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         BalanceData data = response.getData();
 
         StringBuilder messageText = new StringBuilder("Текущий баланс: " + data.getEquity());
+
+        for (Position position : data.getPositions()) {
+            messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s\n" +
+                            "Последняя цена: %s\n" +
+                            "Средняя цена входа: %s\n" +
+                            "Доходность сделки: %s",
+                    position.getSecurityCode(),
+                    position.getBalance(),
+                    position.getCurrentPrice(),
+                    position.getAveragePrice(),
+                    position.getUnrealizedProfit()));
+        }
+
+        SendMessage message = new SendMessage(chatId, messageText.toString());
+        execute(message);
+    }
+
+    @Scheduled(cron = "0 34 23 * * 1-5")
+    private void scheduleTelegramProfitReport() throws Exception {
+        log.info("scheduleTelegramProfitReport start");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json-patch+json");
+        headers.set("X-Api-Key", finamKey);
+        headers.set("accept", "text/plain");
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
+        String url = UriComponentsBuilder.fromHttpUrl(finamHost + "/public/api/v1/portfolio?Content.IncludeCurrencies=true&Content.IncludeMoney=true&" +
+                        "Content.IncludePositions=true&Content.IncludeMaxBuySell=true")
+                .queryParam("ClientId", clientId).encode().toUriString();
+
+        BalanceResponse response = restTemplate
+                .exchange(url
+                        , HttpMethod.GET, requestEntity, BalanceResponse.class).getBody();
+        log.info("Response for portfolio check: {}", response);
+
+        BalanceData data = response.getData();
+
+        Double initialSum = 45271.31;
+        Double earnedRoubles = data.getEquity() - initialSum;
+        Double earnedPercents = (data.getEquity() - initialSum) / (initialSum / 100) ;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
+        String dateText = "21 10 2023";
+        LocalDateTime dateStart = LocalDate.parse(dateText, dtf).atStartOfDay();
+        Long dayCount = ChronoUnit.DAYS.between(dateStart, LocalDateTime.now());
+        Double yearApproximateProfit = (earnedPercents / dayCount) * 365;
+
+        StringBuilder messageText = new StringBuilder("Текущий баланс: " + data.getEquity());
+        messageText.append("\nБаланс на момент публикации робота: ").append(initialSum);
+        messageText.append("\nЗаработано в рублях: ").append(earnedRoubles);
+        messageText.append("\nЗаработано в процентах: ").append(earnedPercents);
+        messageText.append("\nОжидаемая годовая доходность: ").append(yearApproximateProfit);
+
 
         for (Position position : data.getPositions()) {
             messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s\n" +
