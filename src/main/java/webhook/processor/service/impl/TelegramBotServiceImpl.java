@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
@@ -22,6 +25,8 @@ import webhook.processor.dto.balance.BalanceData;
 import webhook.processor.dto.balance.BalanceResponse;
 import webhook.processor.dto.balance.Position;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -116,11 +121,19 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
     public void sendMessageToGroup(String direction, String code, Integer amount) {
         log.info("sendMessageToGroup call with parameters direction: {}, code: {}, amount: {}", direction, code, amount);
-        SendMessage message = new SendMessage(chatId,
-                String.format("Актив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount));
+
+        String path = "src/main/resources/videos/usa.mp4";
+
+        if (direction.equalsIgnoreCase("sell")) {
+            path = "src/main/resources/videos/rus.mp4";
+        }
+
+        String caption = String.format("<b>Внимание! Проведена новая сделка.</b>" +
+                "\n\nАктив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount);
+
         try {
-            execute(message);
-        } catch (TelegramApiException e) {
+            sendMessageWithImage(path, caption);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -128,6 +141,25 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
     @Scheduled(cron = "0 0 10,23 * * 1-5")
     private void scheduleTelegramNotifications() throws Exception {
         log.info("Get balance start");
+        BalanceResponse response = getPortfolioFromFinam();
+        log.info("Response for portfolio check: {}", response);
+
+        BalanceData data = response.getData();
+
+        StringBuilder messageText = new StringBuilder("<b>Ежедневный отчет</b>" +
+                "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
+
+        appendPositionsDescriptionIfTheyExist(data, messageText);
+
+        SendMessage message = new SendMessage(chatId, messageText.toString());
+        message.setParseMode("html");
+        execute(message);
+    }
+
+    @Nullable
+    private BalanceResponse getPortfolioFromFinam() {
+        log.info("getPortfolioFromFinam start");
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json-patch+json");
@@ -143,50 +175,13 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         BalanceResponse response = restTemplate
                 .exchange(url
                         , HttpMethod.GET, requestEntity, BalanceResponse.class).getBody();
-        log.info("Response for portfolio check: {}", response);
-
-        BalanceData data = response.getData();
-
-        StringBuilder messageText = new StringBuilder("Текущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
-
-        if (!data.getPositions().isEmpty()) {
-            messageText.append("\n\nОткрытые позиции:");
-        }
-
-        for (Position position : data.getPositions()) {
-            messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s\n" +
-                            "Последняя цена: %s\n" +
-                            "Средняя цена входа: %s\n" +
-                            "Доходность сделки: %s",
-                    position.getSecurityCode(),
-                    position.getBalance(),
-                    String.format("%.02f", position.getCurrentPrice()) + "₽",
-                    String.format("%.02f", position.getAveragePrice()) + "₽",
-                    String.format("%.02f", position.getUnrealizedProfit()) + "₽"));
-        }
-
-        SendMessage message = new SendMessage(chatId, messageText.toString());
-        execute(message);
+        return response;
     }
 
     @Scheduled(cron = "0 0 14 * * 6")
     private void scheduleTelegramProfitReport() throws Exception {
         log.info("scheduleTelegramProfitReport start");
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json-patch+json");
-        headers.set("X-Api-Key", finamKey);
-        headers.set("accept", "text/plain");
-
-        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
-
-        String url = UriComponentsBuilder.fromHttpUrl(finamHost + "/public/api/v1/portfolio?Content.IncludeCurrencies=true&Content.IncludeMoney=true&" +
-                        "Content.IncludePositions=true&Content.IncludeMaxBuySell=true")
-                .queryParam("ClientId", clientId).encode().toUriString();
-
-        BalanceResponse response = restTemplate
-                .exchange(url
-                        , HttpMethod.GET, requestEntity, BalanceResponse.class).getBody();
+        BalanceResponse response = getPortfolioFromFinam();
         log.info("Response for portfolio check: {}", response);
 
         BalanceData data = response.getData();
@@ -200,30 +195,53 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         Long dayCount = ChronoUnit.DAYS.between(dateStart, LocalDateTime.now());
         Double yearApproximateProfit = (earnedPercents / dayCount) * 365;
 
-        StringBuilder messageText = new StringBuilder("Еженедельный отчет" +
+        StringBuilder messageText = new StringBuilder("<b>Еженедельный отчет</b>" +
                 "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
         messageText.append("\nБаланс на момент публикации робота: ").append(String.format("%.02f", initialSum)).append("₽");
         messageText.append("\nЗаработано: ").append(String.format("%.02f", earnedRoubles)).append("₽, ")
                 .append(String.format("%.02f", earnedPercents)).append("%");
         messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit)).append("%");
 
+        appendPositionsDescriptionIfTheyExist(data, messageText);
+
+        SendMessage message = new SendMessage(chatId, messageText.toString());
+        message.setParseMode("html");
+        execute(message);
+    }
+
+    private static void appendPositionsDescriptionIfTheyExist(BalanceData data, StringBuilder messageText) {
+        log.info("appendPositionsDescriptionIfTheyExist start, data: {}, messageText: {}", data, messageText);
+
         if (!data.getPositions().isEmpty()) {
             messageText.append("\n\nОткрытые позиции:");
         }
 
         for (Position position : data.getPositions()) {
-            messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s\n" +
-                            "Последняя цена: %s\n" +
-                            "Средняя цена входа: %s\n" +
-                            "Доходность сделки: %s",
+            messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s" +
+                            "\nПоследняя цена: %s" +
+                            "\nСредняя цена входа: %s" +
+                            "\nДоходность сделки: %s",
                     position.getSecurityCode(),
                     position.getBalance(),
                     String.format("%.02f", position.getCurrentPrice()) + "₽",
                     String.format("%.02f", position.getAveragePrice()) + "₽",
                     String.format("%.02f", position.getUnrealizedProfit()) + "₽"));
         }
+    }
 
-        SendMessage message = new SendMessage(chatId, messageText.toString());
-        execute(message);
+    public void sendMessageWithImage(String path, String caption) throws Exception {
+        log.info("imageSender start with path: {}, caption: {}", path, caption);
+
+        try (InputStream inputStream = new FileInputStream(path)) {
+            String fileName = path.substring(path.lastIndexOf('/') + 1);
+            SendVideo sendVideo = SendVideo.builder()
+                    .chatId(String.valueOf(chatId))
+                    .video(new InputFile(inputStream, fileName))
+                    .caption(caption)
+                    .build();
+            sendVideo.setParseMode("html");
+
+            execute(sendVideo);
+        }
     }
 }
