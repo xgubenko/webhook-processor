@@ -55,7 +55,13 @@ public class Mail {
                     String messageText = message.getContent().toString().split("DELIMITER")[1];
                     log.info(messageText);
                     TradingViewRequest request = initRequest(messageText);
-                    orderService.process(request);
+
+                    int counter = request.getQuantity();
+                    request.setQuantity(1);
+                    for(int i = 0; i < counter; i++) {
+                        orderService.process(request);
+                    }
+
                 } catch (Exception e) {
                     log.warn(e.toString());
                 }
