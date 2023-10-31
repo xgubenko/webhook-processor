@@ -23,12 +23,6 @@ public class FinamOrderServiceImpl implements FinamOrderService {
     @Value("${finam.host}")
     private String finamHost;
 
-    private final TelegramBotServiceImpl telegramBotService;
-
-    public FinamOrderServiceImpl(TelegramBotServiceImpl telegramBotService) {
-        this.telegramBotService = telegramBotService;
-    }
-
     @Override
     public void process(TradingViewRequest request) {
         log.info("Request processing started: {}", request);
@@ -97,8 +91,6 @@ public class FinamOrderServiceImpl implements FinamOrderService {
 
         restTemplate.postForEntity(finamHost + "/api/v1/orders", newOrderHttpEntity, NewOrder.class);
 
-        telegramBotService.sendMessageToGroup(
-                request.getDirection().toString(), request.getCode(), request.getQuantity());
         return "OK";
     }
 }

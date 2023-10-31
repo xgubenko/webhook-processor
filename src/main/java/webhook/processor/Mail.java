@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import webhook.processor.dto.FinamTransactionDirection;
 import webhook.processor.dto.TradingViewRequest;
 import webhook.processor.service.FinamOrderService;
+import webhook.processor.service.impl.TelegramBotServiceImpl;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -23,6 +24,9 @@ import java.util.Properties;
 @Component
 @EnableScheduling
 public class Mail {
+
+    @Autowired
+    TelegramBotServiceImpl telegramBotService;
 
     @Autowired
     FinamOrderService orderService;
@@ -58,9 +62,12 @@ public class Mail {
 
                     int counter = request.getQuantity();
                     request.setQuantity(1);
-                    for(int i = 0; i < counter; i++) {
+                    for (int i = 0; i < counter; i++) {
                         orderService.process(request);
                     }
+
+                    telegramBotService.sendMessageToGroup(
+                            request.getDirection().toString(), request.getCode(), counter);
 
                 } catch (Exception e) {
                     log.warn(e.toString());
