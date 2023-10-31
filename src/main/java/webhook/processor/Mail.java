@@ -66,7 +66,7 @@ public class Mail {
                         orderService.process(request);
                     }
 
-                    telegramBotService.sendMessageToGroup(
+                    telegramBotService.sendActionMessageToGroup(
                             request.getDirection().toString(), request.getCode(), counter);
 
                 } catch (Exception e) {

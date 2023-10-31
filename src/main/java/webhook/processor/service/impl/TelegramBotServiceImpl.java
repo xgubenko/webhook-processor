@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -119,7 +120,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
     }
 
-    public void sendMessageToGroup(String direction, String code, Integer amount) {
+    public void sendActionMessageToGroup(String direction, String code, Integer amount) {
         log.info("sendMessageToGroup call with parameters direction: {}, code: {}, amount: {}", direction, code, amount);
 
         String path = "src/main/resources/videos/usa.mp4";
@@ -128,15 +129,18 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
             path = "src/main/resources/videos/rus.mp4";
         }
 
-        String caption = String.format("<b>Внимание! Проведена новая сделка.</b>" +
-                "\n\nАктив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount);
+        StringBuilder caption = new StringBuilder(String.format("<b>Внимание! Проведена новая сделка.</b>" +
+                "\n\nАктив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount));
+
+        appendPositionsDescriptionIfTheyExist(Objects.requireNonNull(getPortfolioFromFinam()).getData(), caption);
 
         try {
-            sendMessageWithImage(path, caption);
+            sendMessageWithImage(path, caption.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
     @Scheduled(cron = "0 0 10,23 * * 1-5")
     private void scheduleTelegramNotifications() throws Exception {
@@ -157,7 +161,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
     }
 
     @Nullable
-    private BalanceResponse getPortfolioFromFinam() {
+    public BalanceResponse getPortfolioFromFinam() {
         log.info("getPortfolioFromFinam start");
 
         RestTemplate restTemplate = new RestTemplate();
@@ -211,6 +215,11 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
     private static void appendPositionsDescriptionIfTheyExist(BalanceData data, StringBuilder messageText) {
         log.info("appendPositionsDescriptionIfTheyExist start, data: {}, messageText: {}", data, messageText);
+
+        if (data == null) {
+            log.info("data is null");
+            return;
+        }
 
         if (!data.getPositions().isEmpty()) {
             messageText.append("\n\nОткрытые позиции:");
