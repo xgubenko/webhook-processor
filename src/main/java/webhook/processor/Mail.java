@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import webhook.processor.dto.FinamTransactionDirection;
 import webhook.processor.dto.TradingViewRequest;
+import webhook.processor.properties.FinamProperties;
 import webhook.processor.service.FinamOrderService;
 import webhook.processor.service.impl.TelegramBotServiceImpl;
 
@@ -30,6 +31,9 @@ public class Mail {
 
     @Autowired
     FinamOrderService orderService;
+
+    @Autowired
+    FinamProperties finamProperties;
 
     @Value("${email}")
     private String email;
@@ -97,15 +101,13 @@ public class Mail {
     private TradingViewRequest initRequest(String s) {
         TradingViewRequest request = new TradingViewRequest();
         log.info("Time: {}, initRequest: {}", Instant.now(), s);
-        //clientId api code quantity direction
-        String[] arr = s.split(" ");
 
-        request.setClientId(arr[0]);
-        request.setApi(arr[1]);
-        request.setCode(arr[2]);
-        request.setQuantity(Integer.parseInt(arr[3]));
+        request.setClientId(finamProperties.getId());
+        request.setApi(finamProperties.getKey());
+        request.setCode(finamProperties.getCode());
+        request.setQuantity(finamProperties.getQuantity());
 
-        if (arr[4].equals("buy")) request.setDirection(FinamTransactionDirection.Buy);
+        if (s.equals("buy")) request.setDirection(FinamTransactionDirection.Buy);
         else request.setDirection(FinamTransactionDirection.Sell);
 
         return request;
