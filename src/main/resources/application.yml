@@ -19,3 +19,5 @@ finam:
   host: https://trade-api.finam.ru
   key: ${KEY:key}
   id: ${CLIENTID:clientid}
+  code: ${CODE:USDRUBF}
+  quantity: ${QUANTITY:1}
