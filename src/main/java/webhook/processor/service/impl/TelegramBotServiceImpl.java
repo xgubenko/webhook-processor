@@ -190,18 +190,18 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
         BalanceData data = response.getData();
 
-        Double initialSum = 45271.31;
+        Double initialSum = 34142.90;
         Double earnedRoubles = data.getEquity() - initialSum;
         Double earnedPercents = (data.getEquity() - initialSum) / (initialSum / 100);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
-        String dateText = "21 10 2023";
+        String dateText = "11 02 2024";
         LocalDateTime dateStart = LocalDate.parse(dateText, dtf).atStartOfDay();
         Long dayCount = ChronoUnit.DAYS.between(dateStart, LocalDateTime.now());
         Double yearApproximateProfit = (earnedPercents / dayCount) * 365;
 
         StringBuilder messageText = new StringBuilder("<b>Еженедельный отчет</b>" +
                 "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
-        messageText.append("\nБаланс на момент публикации робота: ").append(String.format("%.02f", initialSum)).append("₽");
+        messageText.append("\nБаланс на момент перезапуска робота: ").append(String.format("%.02f", initialSum)).append("₽");
         messageText.append("\nЗаработано: ").append(String.format("%.02f", earnedRoubles)).append("₽, ")
                 .append(String.format("%.02f", earnedPercents)).append("%");
         messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit)).append("%");
