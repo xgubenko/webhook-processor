@@ -101,13 +101,14 @@ public class Mail {
     private TradingViewRequest initRequest(String s) {
         TradingViewRequest request = new TradingViewRequest();
         log.info("Time: {}, initRequest: {}", Instant.now(), s);
+        String[] orderParams = s.split(" ");
 
         request.setClientId(finamProperties.getId());
         request.setApi(finamProperties.getKey());
         request.setCode(finamProperties.getCode());
-        request.setQuantity(finamProperties.getQuantity());
+        request.setQuantity(Integer.parseInt(orderParams[1]));
 
-        if (s.equals("buy")) request.setDirection(FinamTransactionDirection.Buy);
+        if (orderParams[0].equals("buy")) request.setDirection(FinamTransactionDirection.Buy);
         else request.setDirection(FinamTransactionDirection.Sell);
 
         return request;

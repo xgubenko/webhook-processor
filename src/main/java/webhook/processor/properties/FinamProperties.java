@@ -12,5 +12,4 @@ public class FinamProperties {
     private String key;
     private String id;
     private String code;
-    private Integer quantity;
 }
