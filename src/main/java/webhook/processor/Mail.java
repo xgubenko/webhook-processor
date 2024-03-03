@@ -12,11 +12,7 @@ import webhook.processor.properties.FinamProperties;
 import webhook.processor.service.FinamOrderService;
 import webhook.processor.service.impl.TelegramBotServiceImpl;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Properties;
@@ -102,15 +98,20 @@ public class Mail {
         TradingViewRequest request = new TradingViewRequest();
         log.info("Time: {}, initRequest: {}", Instant.now(), s);
         String[] orderParams = s.split(" ");
-
         request.setClientId(finamProperties.getId());
         request.setApi(finamProperties.getKey());
         request.setCode(finamProperties.getCode());
-        request.setQuantity(Integer.parseInt(orderParams[1]));
+        request.setQuantity(getQuantity(orderParams));
 
         if (orderParams[0].equals("buy")) request.setDirection(FinamTransactionDirection.Buy);
         else request.setDirection(FinamTransactionDirection.Sell);
 
         return request;
+    }
+
+    private static int getQuantity(String[] orderParams) {
+        int quantity = Integer.parseInt(orderParams[1]);
+        if (quantity < 0) quantity = quantity * -1;
+        return quantity;
     }
 }
