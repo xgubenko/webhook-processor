@@ -1,5 +1,6 @@
 package webhook.processor.service.impl;
 
+import com.binance.connector.futures.client.impl.CMFuturesClientImpl;
 import com.binance.connector.futures.client.impl.FuturesClientImpl;
 import com.binance.connector.futures.client.impl.UMFuturesClientImpl;
 import lombok.AllArgsConstructor;
@@ -24,8 +25,8 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
 
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
+        System.out.println(properties.getKey() + "\n" +  properties.getSecret());
 
-        System.out.println("MARKET");
         parameters.put("symbol", request.getCode());
         parameters.put("side", request.getDirection());
         parameters.put("type", "MARKET");
@@ -33,27 +34,19 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 
         System.out.println(client.account().newOrder(parameters));
 
-        System.out.println("TRAILING STOP");
         parameters.put("type", "TRAILING_STOP_MARKET");
 
         var direction = "BUY";
-        var price = request.getPrice() * 0.985;
-        var formattedPriceString = String.valueOf(String.format("%.4f", price)).replace(',','.');
+        var price = 0.985;
+        if(request.getDirection().equals("BUY")) {
+            direction = "SELL";
+            price = 1.015;
+        }
         parameters.put("side", direction);
         parameters.put("callbackRate", properties.getTrailingDelta());
         parameters.put("timeInForce", "GTC");
-        parameters.put("price", formattedPriceString);
+        parameters.put("price", request.getPrice() * price);
 
         System.out.println(client.account().newOrder(parameters));
-
-        System.out.println("TAKE PROFIT:");
-        price = request.getPrice() * 0.997;
-        formattedPriceString = String.valueOf(String.format("%.4f", price)).replace(',','.');
-        System.out.println(price);
-        parameters.put("stopprice", formattedPriceString);
-        parameters.put("type", "TAKE_PROFIT");
-        System.out.println(client.account().newOrder(parameters));
-
-
     }
 }
