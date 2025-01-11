@@ -8,15 +8,19 @@ server:
 #    enabled: true
   port: 8081
 
-email: ${EMAIL:email}
-password: ${PASS:pass}
-from: "TradingView <noreply@tradingview.com>"
-bot:
-  name: ${NAME:@name}
-  token: ${TOKEN:token}
-  chatid: ${CHATID:id}
+#email: ${EMAIL:email}
+#password: ${PASS:pass}
+#from: "TradingView <noreply@tradingview.com>"
+#bot:
+#  name: ${NAME:@name}
+#  token: ${TOKEN:token}
+#  chatid: ${CHATID:id}
 finam:
   host: https://trade-api.finam.ru
   key: ${KEY:key}
   id: ${CLIENTID:clientid}
   code: ${CODE:USDRUBF}
+binance:
+  key: ${BINANCE_KEY}
+  secret: ${BINANCE_SECRET}
+  trailingDelta: ${BINANCE_DELTA:1}

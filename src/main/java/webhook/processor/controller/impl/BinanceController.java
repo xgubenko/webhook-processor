@@ -29,18 +29,21 @@ public class BinanceController {
     private BinanceTradingViewRequest initRequest(String s) {
         BinanceTradingViewRequest request = new BinanceTradingViewRequest();
 
-        //clientId api code quantity {{strategy.order.action}} secret
+        //code quantity direction {{strategy.order.action}}
         String[] arr = s.split(" ");
 
-        request.setClientId(arr[0]);
-        request.setApi(arr[1]);
-        request.setCode(arr[2]);
-        request.setQuantity(Double.parseDouble(arr[3]));
+        String direction = "";
+        if(arr[2].equals("buy")){
+            direction = "BUY";
+        }
+        else {
+            direction = "SELL";
+        }
 
-        if(arr[4].equals("buy")) request.setDirection("BUY");
-        else request.setDirection("SELL");
-
-        request.setSecret(arr[5]);
+        request.setCode(arr[0]);
+        request.setQuantity(Double.parseDouble(arr[1]));
+        request.setDirection(direction);
+        request.setPrice(Double.parseDouble(arr[3]));
 
         return request;
     }

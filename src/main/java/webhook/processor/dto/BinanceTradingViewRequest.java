@@ -7,20 +7,18 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BinanceTradingViewRequest {
-    private String clientId;
-    private String api;
     private String code;
     private Double quantity;
     private String direction;
-    private String secret;
+    private Double price;
 
     @Override
     public String toString() {
         return "BinanceTradingViewRequest{" +
-                "clientId='" + clientId + '\'' +
                 ", code='" + code + '\'' +
                 ", quantity=" + quantity +
                 ", direction=" + direction +
+                ", price=" + price +
                 '}';
     }
 }

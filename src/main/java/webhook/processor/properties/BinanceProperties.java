@@ -5,11 +5,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "finam")
+@ConfigurationProperties(prefix = "binance")
 @Data
-public class FinamProperties {
-    private String host;
+public class BinanceProperties {
     private String key;
-    private String id;
-    private String code;
+    private String secret;
+    private Integer trailingDelta;
 }
