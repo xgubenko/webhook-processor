@@ -37,10 +37,10 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("type", "TRAILING_STOP_MARKET");
 
         var direction = "BUY";
-        var price = 0.99;
+        var price = 0.985;
         if(request.getDirection().equals("BUY")) {
             direction = "SELL";
-            price = 1.01;
+            price = 1.015;
         }
         parameters.put("side", direction);
         parameters.put("callbackRate", properties.getTrailingDelta());
