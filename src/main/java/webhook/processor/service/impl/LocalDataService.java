@@ -1,13 +1,11 @@
 package webhook.processor.service.impl;
 
-import lombok.extern.log4j.Log4j;
-import org.jvnet.hk2.annotations.Service;
+import org.springframework.stereotype.Service;
 import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
 
 import java.util.HashMap;
 
-@Log4j
 @Service
 public class LocalDataService {
     private final String HULLSUITE = "hullsuite";
