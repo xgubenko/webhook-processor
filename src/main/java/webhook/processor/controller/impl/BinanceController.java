@@ -27,23 +27,22 @@ public class BinanceController {
     }
 
     private BinanceTradingViewRequest initRequest(String s) {
+//        PENGUUSDT 250 macd down {{price}}
         BinanceTradingViewRequest request = new BinanceTradingViewRequest();
 
-        //code quantity direction {{strategy.order.action}}
+        //code quantity indicator side {{strategy.order.action}}
         String[] arr = s.split(" ");
+        var code = arr[0];
+        var quantity = Double.parseDouble(arr[1]);
+        var indicator = arr[2];
+        var indicatorDirection = arr[3];
+        var price = Double.parseDouble(arr[4]);
 
-        String direction = "";
-        if(arr[2].equals("buy")){
-            direction = "BUY";
-        }
-        else {
-            direction = "SELL";
-        }
-
-        request.setCode(arr[0]);
-        request.setQuantity(Double.parseDouble(arr[1]));
-        request.setDirection(direction);
-        request.setPrice(Double.parseDouble(arr[3]));
+        request.setCode(code);
+        request.setQuantity(quantity);
+        request.setIndicator(indicator);
+        request.setIndicatorDirection(indicatorDirection);
+        request.setPrice(price);
 
         return request;
     }
