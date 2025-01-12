@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Configuration;
 public class BinanceProperties {
     private String key;
     private String secret;
-    private Integer trailingDelta;
+    private Double trailingDelta;
 }
