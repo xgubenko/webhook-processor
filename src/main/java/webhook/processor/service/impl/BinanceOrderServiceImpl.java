@@ -28,7 +28,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 
         var hullsuite = coinData.getHullsuite();
         var macd = coinData.getMacd();
-        if (hullsuite.equals(macd)) {
+        if (hullsuite != null && hullsuite.equals(macd)) {
             localDataService.removeCoin(coinData.getCode());
             createOrder(coinData);
         }
