@@ -42,6 +42,10 @@ public class LocalDataService {
         return getCoinData(ticker);
     }
 
+    public void removeCoin(String ticker) {
+        storage.remove(ticker);
+    }
+
     public CoinData getCoinData(String ticker) {
         return storage.get(ticker);
     }

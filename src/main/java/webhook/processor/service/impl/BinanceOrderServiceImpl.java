@@ -23,17 +23,15 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 
     @Override
     public void process(BinanceTradingViewRequest request) {
-
-
         log.info("Start processing request: {}", request);
         var coinData = localDataService.updateValue(request);
 
         var hullsuite = coinData.getHullsuite();
         var macd = coinData.getMacd();
-        if(hullsuite.equals(macd)) {
+        if (hullsuite.equals(macd)) {
+            localDataService.removeCoin(coinData.getCode());
             createOrder(coinData);
         }
-
     }
 
     private void createOrder(CoinData coinData) {
