@@ -113,11 +113,11 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
     public void sendActionMessageToGroup(String direction, String code, String amount) {
         log.info("sendMessageToGroup call with parameters direction: {}, code: {}, amount: {}", direction, code, amount);
 
-        String path = "src/main/resources/videos/usa.mp4";
-
-        if (direction.equalsIgnoreCase("sell")) {
-            path = "src/main/resources/videos/rus.mp4";
-        }
+//        String path = "src/main/resources/videos/usa.mp4";
+//
+//        if (direction.equalsIgnoreCase("sell")) {
+//            path = "src/main/resources/videos/rus.mp4";
+//        }
 
         StringBuilder caption = new StringBuilder(String.format("<b>Внимание! Проведена новая сделка.</b>" +
                 "\n\nАктив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount));
@@ -125,7 +125,9 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 //        appendPositionsDescriptionIfTheyExist(Objects.requireNonNull(getPortfolioFromFinam()).getData(), caption);
 
         try {
-            sendMessageWithImage(path, caption.toString());
+            SendMessage message = new SendMessage(chatId,
+                    caption.toString());
+            execute(message);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

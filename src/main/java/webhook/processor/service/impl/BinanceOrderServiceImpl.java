@@ -52,7 +52,6 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("quantity", coinData.getQuantity());
 
         System.out.println(client.account().newOrder(parameters));
-        telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
 
         parameters.put("type", "TRAILING_STOP_MARKET");
 
@@ -68,5 +67,6 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("price", coinData.getPrice() * price);
 
         System.out.println(client.account().newOrder(parameters));
+        telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
     }
 }
