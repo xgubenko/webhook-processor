@@ -20,6 +20,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 
     private final BinanceProperties properties;
     private final LocalDataService localDataService;
+    private final TelegramBotServiceImpl telegramBotService;
 
     @Override
     public void process(BinanceTradingViewRequest request) {
@@ -51,6 +52,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("quantity", coinData.getQuantity());
 
         System.out.println(client.account().newOrder(parameters));
+        telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
 
         parameters.put("type", "TRAILING_STOP_MARKET");
 
