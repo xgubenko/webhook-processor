@@ -119,7 +119,8 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 //            path = "src/main/resources/videos/rus.mp4";
 //        }
 
-        StringBuilder caption = new StringBuilder(String.format("<b>Внимание! Проведена новая сделка.</b>" +
+//        StringBuilder caption = new StringBuilder(String.format("<b>Внимание! Проведена новая сделка.</b>" +
+        StringBuilder caption = new StringBuilder(String.format("Внимание! Проведена новая сделка." +
                 "\n\nАктив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount));
 
 //        appendPositionsDescriptionIfTheyExist(Objects.requireNonNull(getPortfolioFromFinam()).getData(), caption);
