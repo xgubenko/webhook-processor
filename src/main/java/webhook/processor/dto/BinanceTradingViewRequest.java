@@ -2,6 +2,7 @@ package webhook.processor.dto;
 
 import lombok.*;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor

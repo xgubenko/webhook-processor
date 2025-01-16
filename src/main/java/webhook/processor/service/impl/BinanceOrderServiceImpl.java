@@ -1,6 +1,5 @@
 package webhook.processor.service.impl;
 
-import com.binance.connector.futures.client.impl.CMFuturesClientImpl;
 import com.binance.connector.futures.client.impl.FuturesClientImpl;
 import com.binance.connector.futures.client.impl.UMFuturesClientImpl;
 import lombok.AllArgsConstructor;
@@ -12,6 +11,7 @@ import webhook.processor.properties.BinanceProperties;
 import webhook.processor.service.BinanceOrderService;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -35,11 +35,15 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         }
     }
 
+    @Override
+    public Map<String, CoinData> getCoinData() {
+        return localDataService.getStorage();
+    }
+
     private void createOrder(CoinData coinData) {
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
 
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
-//        System.out.println(properties.getKey() + "\n" +  properties.getSecret());
 
         parameters.put("symbol", coinData.getCode());
 

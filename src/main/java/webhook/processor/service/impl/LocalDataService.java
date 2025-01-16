@@ -5,6 +5,7 @@ import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class LocalDataService {
@@ -48,5 +49,9 @@ public class LocalDataService {
 
     public CoinData getCoinData(String ticker) {
         return storage.get(ticker);
+    }
+
+    public Map<String, CoinData> getStorage() {
+        return Map.copyOf(storage);
     }
 }

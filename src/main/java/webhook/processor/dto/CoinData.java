@@ -5,16 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CoinData {
+public class CoinData implements Serializable {
     private String code;
     private String hullsuite;
     private String macd;
-    private Double quantity;
-    private Double price;
+    private Double quantity = 0.0;
+    private Double price = 0.0;
 
 
     @Override
