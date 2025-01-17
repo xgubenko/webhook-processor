@@ -33,6 +33,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
             localDataService.removeCoin(coinData.getCode());
             createOrder(coinData);
         }
+        localDataService.updateStorage();
     }
 
     @Override

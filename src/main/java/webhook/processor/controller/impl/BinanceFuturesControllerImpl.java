@@ -1,9 +1,13 @@
 package webhook.processor.controller.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import webhook.processor.controller.WebhookController;
 import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
 import webhook.processor.service.BinanceOrderService;
@@ -11,14 +15,17 @@ import webhook.processor.service.BinanceOrderService;
 import java.util.Map;
 
 /**
- * Integration TradingView webhooks and Binance Futures API.
+ * Integration between TradingView webhooks and Binance Futures API.
  */
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/binance")
-public class BinanceController {
+public class BinanceFuturesControllerImpl implements WebhookController<CoinData> {
 
     private final BinanceOrderService binanceOrderService;
+
+    public BinanceFuturesControllerImpl(BinanceOrderService binanceOrderService) {
+        this.binanceOrderService = binanceOrderService;
+    }
 
     /**
      * Get information about current state of indicators for each coin.
@@ -26,9 +33,15 @@ public class BinanceController {
      * @return Map of ticker as a key and its local data as a value.
      */
     @GetMapping("/coins")
-    public ResponseEntity<Map<String, CoinData>> getCoinData() {
+    public ResponseEntity<Map<String, CoinData>> getPositionsState() {
         var response = binanceOrderService.getCoinData();
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    //todo implement token check for Binance
+    @Override
+    public ResponseEntity<Object> checkToken(String request) {
+        return null;
     }
 
     /**

@@ -24,3 +24,5 @@ binance:
   key: ${BINANCE_KEY}
   secret: ${BINANCE_SECRET}
   trailingDelta: ${BINANCE_DELTA:2}
+storage:
+  file: ${PATH:/storage.txt}
