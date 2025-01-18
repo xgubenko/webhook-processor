@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
+import webhook.processor.dto.PositionState;
 import webhook.processor.properties.LocalStorageProperties;
 
 import java.io.FileInputStream;
@@ -32,7 +33,11 @@ public class LocalDataService {
 
     @PostConstruct
     private void initMap() {
-        storage.putAll(deserialize());
+        storage.putAll(deserialize(properties.getFile()));
+    }
+
+    public void requestStorageUpdate() {
+        this.updateStorage(properties.getFile(), storage);
     }
 
     public CoinData updateValue(BinanceTradingViewRequest request) {
@@ -61,12 +66,14 @@ public class LocalDataService {
 
         storage.put(ticker, data);
         log.debug("Coin updated: " + data);
+        this.requestStorageUpdate();
 
         return getCoinData(ticker);
     }
 
     public void removeCoin(String ticker) {
         storage.remove(ticker);
+        this.requestStorageUpdate();
     }
 
     public CoinData getCoinData(String ticker) {
@@ -77,24 +84,25 @@ public class LocalDataService {
         return Map.copyOf(storage);
     }
 
-    public void updateStorage() {
-        try (FileOutputStream fileOut = new FileOutputStream(properties.getFile());
+    private synchronized void updateStorage(String file, Map<String, ? extends PositionState> storage) {
+        try (FileOutputStream fileOut = new FileOutputStream(file);
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             out.writeObject(storage);
-            log.debug("HashMap has been serialized and saved to: {}", properties.getFile());
+            log.debug("HashMap has been serialized and saved to: {}", file);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private HashMap<String, CoinData> deserialize() {
-        HashMap<String, CoinData> map = null;
-        try (FileInputStream fileIn = new FileInputStream(properties.getFile());
+    private HashMap<String, CoinData> deserialize(String file) {
+        var map = new HashMap<String, CoinData>();
+        try (FileInputStream fileIn = new FileInputStream(file);
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
-            map = (HashMap<String, CoinData>) in.readObject();
-            log.debug("HashMap has been deserialized from: {}", properties.getFile());
+            map.putAll((HashMap<String, CoinData>) in.readObject());
+            log.info("Position storage has been deserialized from: {}", file);
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error("Unable to find file {}", file);
+            return map;
         }
         return map;
     }
