@@ -24,7 +24,6 @@ binance:
   key: ${BINANCE_KEY}
   secret: ${BINANCE_SECRET}
   trailingDelta: ${BINANCE_DELTA:2}
-  takePrice: ${BINANCE_TAKE:0.001}
-  stopPrice: ${BINANCE_STOP:0.04}
+  stopPrice: ${BINANCE_STOP:0.001}
 storage:
   file: ${PATH:/storage}

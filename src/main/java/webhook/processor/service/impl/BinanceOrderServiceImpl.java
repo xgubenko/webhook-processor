@@ -64,20 +64,20 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("type", "TAKE_PROFIT");
 
         var direction = "BUY";
-        var takePrice = 1.0 + properties.getTakePrice();
-        if(coinData.getMacd().equals("up")) {
-            direction = "SELL";
-            takePrice = 1.0 - properties.getTakePrice();
-        }
-
         var stopPrice = 1.0 + properties.getStopPrice();
         if(coinData.getMacd().equals("up")) {
+            direction = "SELL";
             stopPrice = 1.0 - properties.getStopPrice();
+        }
+        var price = 0.999;
+                if(coinData.getMacd().equals("up")) {
+            direction = "SELL";
+            price = 1.001;
         }
 
         parameters.put("side", direction);
         parameters.put("timeInForce", "GTC");
-        parameters.put("price", coinData.getPrice() * takePrice);
+        parameters.put("price", coinData.getPrice() * price);
         parameters.put("stopPrice", coinData.getPrice() * stopPrice);
 
         log.info("Stop loss order: {}", client.account().newOrder(parameters));
