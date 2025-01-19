@@ -1,8 +1,5 @@
 package webhook.processor.service.impl;
 
-import com.binance.connector.futures.client.impl.CMFuturesClientImpl;
-import com.binance.connector.futures.client.impl.FuturesClientImpl;
-import com.binance.connector.futures.client.impl.UMFuturesClientImpl;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +19,6 @@ import webhook.processor.dto.balance.Position;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j

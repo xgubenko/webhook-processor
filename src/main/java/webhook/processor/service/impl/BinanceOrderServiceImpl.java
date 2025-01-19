@@ -59,22 +59,44 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("type", "MARKET");
         parameters.put("quantity", coinData.getQuantity());
 
-        System.out.println(client.account().newOrder(parameters));
+        log.info("Market order: {}", client.account().newOrder(parameters));
 
-        parameters.put("type", "TRAILING_STOP_MARKET");
+        parameters.put("type", "TAKE_PROFIT");
 
         var direction = "BUY";
-        var price = 0.999;
+        var takePrice = 1.0 + properties.getTakePrice();
         if(coinData.getMacd().equals("up")) {
             direction = "SELL";
-            price = 1.001;
+            takePrice = 1.0 - properties.getTakePrice();
         }
-        parameters.put("side", direction);
-        parameters.put("callbackRate", properties.getTrailingDelta());
-        parameters.put("timeInForce", "GTC");
-        parameters.put("price", coinData.getPrice() * price);
 
-        System.out.println(client.account().newOrder(parameters));
+        var stopPrice = 1.0 + properties.getStopPrice();
+        if(coinData.getMacd().equals("up")) {
+            stopPrice = 1.0 - properties.getStopPrice();
+        }
+
+        parameters.put("side", direction);
+        parameters.put("timeInForce", "GTC");
+        parameters.put("price", coinData.getPrice() * takePrice);
+        parameters.put("stopPrice", coinData.getPrice() * stopPrice);
+
+        log.info("Stop loss order: {}", client.account().newOrder(parameters));
+
+        //todo remove after testing
+//        parameters.put("type", "TRAILING_STOP_MARKET");
+//
+//        var direction = "BUY";
+//        var price = 0.999;
+//        if(coinData.getMacd().equals("up")) {
+//            direction = "SELL";
+//            price = 1.001;
+//        }
+//        parameters.put("side", direction);
+//        parameters.put("callbackRate", properties.getTrailingDelta());
+//        parameters.put("timeInForce", "GTC");
+//        parameters.put("price", coinData.getPrice() * price);
+//
+//        log.info("Stop loss order: {}", client.account().newOrder(parameters));
         telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
     }
 }
