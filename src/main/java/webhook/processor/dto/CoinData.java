@@ -16,7 +16,7 @@ public class CoinData extends PositionState {
     private String hullsuite;
     private String macd;
 
-    public CoinData(String code, Double quantity, Double price, String hullsuite, String macd) {
+    public CoinData(String code, Long quantity, Double price, String hullsuite, String macd) {
         super(code, quantity, price);
         this.hullsuite = hullsuite;
         this.macd = macd;

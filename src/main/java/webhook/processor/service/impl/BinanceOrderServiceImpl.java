@@ -104,10 +104,9 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
      * @return pojo to work with.
      */
     private BinanceTradingViewRequest initRequest(String s, Double budget) {
-        DecimalFormat dec = new DecimalFormat("#0.00");
         var arr = s.split(" ");
         var price = Double.parseDouble(arr[3]);
-        var quantity = Double.parseDouble(dec.format(budget / price));
+        var quantity = Math.round(budget / price);
 
         return BinanceTradingViewRequest
                 .builder()

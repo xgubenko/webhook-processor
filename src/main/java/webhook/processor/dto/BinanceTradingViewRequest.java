@@ -10,7 +10,7 @@ import lombok.*;
 public class BinanceTradingViewRequest {
 
     private String code;
-    private Double quantity;
+    private Long quantity;
     private String indicator;
     private String indicatorDirection;
     private Double price;
