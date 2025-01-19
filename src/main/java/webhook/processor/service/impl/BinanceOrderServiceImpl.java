@@ -2,6 +2,7 @@ package webhook.processor.service.impl;
 
 import com.binance.connector.futures.client.impl.FuturesClientImpl;
 import com.binance.connector.futures.client.impl.UMFuturesClientImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +88,11 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         var mapper = new ObjectMapper();
         var response = client.market().tickerSymbol(parameters);
 
-        return mapper.convertValue(response, BinancePriceDto.class);
+        try {
+            return mapper.readValue(response, BinancePriceDto.class);
+        } catch (JsonProcessingException e) {
+            log.error("Unable to get ticker price: {}", code);
+            throw new RuntimeException(e);
+        }
     }
 }
