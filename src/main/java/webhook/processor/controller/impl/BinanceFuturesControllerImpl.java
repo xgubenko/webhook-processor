@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import webhook.processor.controller.WebhookController;
+import webhook.processor.dto.BinancePriceDto;
 import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
 import webhook.processor.service.BinanceOrderService;
@@ -35,7 +36,7 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
     }
 
     @GetMapping("/price")
-    public ResponseEntity<String> getPrice(@RequestParam String code) {
+    public ResponseEntity<BinancePriceDto> getPrice(@RequestParam String code) {
         var response = binanceOrderService.getPrice(code);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

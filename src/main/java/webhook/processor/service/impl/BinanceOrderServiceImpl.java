@@ -2,9 +2,11 @@ package webhook.processor.service.impl;
 
 import com.binance.connector.futures.client.impl.FuturesClientImpl;
 import com.binance.connector.futures.client.impl.UMFuturesClientImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import webhook.processor.dto.BinancePriceDto;
 import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
 import webhook.processor.properties.BinanceProperties;
@@ -78,10 +80,13 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
     }
 
-    public String getPrice(String code) {
+    public BinancePriceDto getPrice(String code) {
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
         parameters.put("symbol", code);
-        return client.market().tickerSymbol(parameters);
+        var mapper = new ObjectMapper();
+        var response = client.market().tickerSymbol(parameters);
+
+        return mapper.convertValue(response, BinancePriceDto.class);
     }
 }

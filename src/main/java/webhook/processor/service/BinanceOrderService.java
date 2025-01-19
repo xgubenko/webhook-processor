@@ -1,5 +1,6 @@
 package webhook.processor.service;
 
+import webhook.processor.dto.BinancePriceDto;
 import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
 
@@ -9,5 +10,5 @@ public interface BinanceOrderService {
     void process(BinanceTradingViewRequest request);
 
     Map<String, CoinData> getCoinData();
-    String getPrice(String code);
+    BinancePriceDto getPrice(String code);
 }
