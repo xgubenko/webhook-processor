@@ -26,7 +26,8 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
     private final TelegramBotServiceImpl telegramBotService;
 
     @Override
-    public void process(BinanceTradingViewRequest request) {
+    public void process(String tvRequest) {
+        var request = initRequest(tvRequest, properties.getBudget());
         log.info("Start processing request: {}", request);
         var coinData = localDataService.updateValue(request);
 
@@ -48,8 +49,6 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
     }
 
     private void createOrder(CoinData coinData) {
-        updateCoinParams(coinData, properties.getBudget());
-
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
 
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
@@ -82,13 +81,6 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
     }
 
-    private void updateCoinParams(CoinData coinData, Double budget) {
-        var data = getPrice(coinData.getCode());
-        var price = data.getPrice();
-        coinData.setPrice(price);
-        coinData.setQuantity(budget / price);
-    }
-
     public BinancePriceDto getPrice(String code) {
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
@@ -102,5 +94,22 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
             log.error("Unable to get ticker price: {}", code);
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Parse TradingView webhook string into something usable.
+     * @param s - webhook string
+     * @return pojo to work with.
+     */
+    private BinanceTradingViewRequest initRequest(String s, Double budget) {
+        var arr = s.split(" ");
+        return BinanceTradingViewRequest
+                .builder()
+                .code(arr[0])
+                .indicator(arr[1])
+                .indicatorDirection(arr[2])
+                .price(Double.parseDouble(arr[3]))
+                .quantity(budget / Double.parseDouble(arr[3]))
+                .build();
     }
 }

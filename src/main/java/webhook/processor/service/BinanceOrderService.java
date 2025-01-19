@@ -7,7 +7,7 @@ import webhook.processor.dto.CoinData;
 import java.util.Map;
 
 public interface BinanceOrderService {
-    void process(BinanceTradingViewRequest request);
+    void process(String request);
 
     Map<String, CoinData> getCoinData();
     BinancePriceDto getPrice(String code);

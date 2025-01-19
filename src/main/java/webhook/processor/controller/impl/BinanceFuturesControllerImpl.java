@@ -49,29 +49,16 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
 
     /**
      * Process request from TradingView in the following order: code, quantity, indicator, direction, price.
-     * example: PENGUUSDT macd down
+     * example: PENGUUSDT macd down 0.355
      *
      * @param request - webhook request from TradingView.
      * @return code 200 if no problems occurred.
      */
     @PostMapping(consumes = "text/plain")
     public ResponseEntity<Object> createNewOrder(@RequestBody String request) {
-        binanceOrderService.process(initRequest(request));
+        binanceOrderService.process(request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    /**
-     * Parse TradingView webhook string into something usable.
-     * @param s - webhook string
-     * @return pojo to work with.
-     */
-    private BinanceTradingViewRequest initRequest(String s) {
-        var arr = s.split(" ");
-        return BinanceTradingViewRequest
-                .builder()
-                .code(arr[0])
-                .indicator(arr[1])
-                .indicatorDirection(arr[2])
-                .build();
-    }
+
 }
