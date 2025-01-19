@@ -1,6 +1,8 @@
 package webhook.processor.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serial;
 
@@ -14,8 +16,8 @@ public class CoinData extends PositionState {
     private String hullsuite;
     private String macd;
 
-    public CoinData(String code, String hullsuite, String macd) {
-        super(code);
+    public CoinData(String code, Double quantity, Double price, String hullsuite, String macd) {
+        super(code, quantity, price);
         this.hullsuite = hullsuite;
         this.macd = macd;
     }
@@ -31,6 +33,8 @@ public class CoinData extends PositionState {
                 "code='" + code + '\'' +
                 ", hullsuite='" + hullsuite + '\'' +
                 ", macd='" + macd + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
                 '}';
     }
 }

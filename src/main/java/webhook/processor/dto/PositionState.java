@@ -17,4 +17,6 @@ public abstract class PositionState implements Serializable {
     @Serial
     private static final long serialVersionUID = 42L;
     protected String code;
+    protected Double quantity = 0.0;
+    protected Double price = 0.0;
 }

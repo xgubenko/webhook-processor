@@ -11,4 +11,5 @@ public class BinanceProperties {
     private String key;
     private String secret;
     private Double trailingDelta;
+    private Double budget;
 }

@@ -48,10 +48,11 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
     }
 
     private void createOrder(CoinData coinData) {
-        LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
+        updateCoinParams(coinData, properties.getBudget());
 
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
 
+        LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
         parameters.put("symbol", coinData.getCode());
 
         var marketDirection = "BUY";
@@ -79,6 +80,13 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 
         log.info("Stop loss order: {}", client.account().newOrder(parameters));
         telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
+    }
+
+    private void updateCoinParams(CoinData coinData, Double budget) {
+        var data = getPrice(coinData.getCode());
+        var price = data.getPrice();
+        coinData.setPrice(price);
+        coinData.setQuantity(budget / price);
     }
 
     public BinancePriceDto getPrice(String code) {
