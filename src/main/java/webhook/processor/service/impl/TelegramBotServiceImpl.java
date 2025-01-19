@@ -9,16 +9,10 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import webhook.processor.dto.balance.BalanceData;
-import webhook.processor.dto.balance.Position;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -50,11 +44,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         telegramBot.setChatId(chatId);
         try {
             telegramBot.botConnect();
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (TelegramApiException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -91,7 +81,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
             SendMessage message = new SendMessage(chatId,
                     "Привет, кожаные ублюдки! Робот был перезапущен.");
-//            execute(message);
+            execute(message);
 
         } catch (TelegramApiException e) {
             log.error("Cant Connect. Pause " + RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.getMessage());
@@ -106,140 +96,16 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
     }
 
-    public void sendActionMessageToGroup(String direction, String code, String amount) {
+    public void sendActionMessageToGroup(String direction, String code, Long amount) {
         log.info("sendMessageToGroup call with parameters direction: {}, code: {}, amount: {}", direction, code, amount);
-
-//        String path = "src/main/resources/videos/usa.mp4";
-//
-//        if (direction.equalsIgnoreCase("sell")) {
-//            path = "src/main/resources/videos/rus.mp4";
-//        }
-
-//        StringBuilder caption = new StringBuilder(String.format("<b>Внимание! Проведена новая сделка.</b>" +
         StringBuilder caption = new StringBuilder(String.format("Внимание! Проведена новая сделка." +
                 "\n\nАктив: %s \nНаправление: %s \nКоличество: %s", code, direction, amount));
-
-//        appendPositionsDescriptionIfTheyExist(Objects.requireNonNull(getPortfolioFromFinam()).getData(), caption);
-
         try {
             SendMessage message = new SendMessage(chatId,
                     caption.toString());
             execute(message);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-
-//    @Scheduled(cron = "0 0 10,23 * * 1-5")
-//    private void scheduleTelegramNotifications() throws Exception {
-//        log.info("Get balance start");
-//        BalanceResponse response = getPortfolioFromFinam();
-//        log.info("Response for portfolio check: {}", response);
-//
-//        BalanceData data = response.getData();
-//
-//        StringBuilder messageText = new StringBuilder("<b>Ежедневный отчет</b>" +
-//                "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
-//
-//        appendPositionsDescriptionIfTheyExist(data, messageText);
-//
-//        SendMessage message = new SendMessage(chatId, messageText.toString());
-//        message.setParseMode("html");
-//        execute(message);
-//    }
-
-//    @Nullable
-//    public BalanceResponse getPortfolioFromFinam() {
-//        log.info("getPortfolioFromFinam start");
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set("Content-Type", "application/json-patch+json");
-//        headers.set("X-Api-Key", finamKey);
-//        headers.set("accept", "text/plain");
-//
-//        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
-//
-//        String url = UriComponentsBuilder.fromHttpUrl(finamHost + "/public/api/v1/portfolio?Content.IncludeCurrencies=true&Content.IncludeMoney=true&" +
-//                        "Content.IncludePositions=true&Content.IncludeMaxBuySell=true")
-//                .queryParam("ClientId", clientId).encode().toUriString();
-//
-//        BalanceResponse response = restTemplate
-//                .exchange(url
-//                        , HttpMethod.GET, requestEntity, BalanceResponse.class).getBody();
-//        return response;
-//    }
-
-//    @Scheduled(cron = "0 0 14 * * 6")
-//    private void scheduleTelegramProfitReport() throws Exception {
-//        log.info("scheduleTelegramProfitReport start");
-//        BalanceResponse response = getPortfolioFromFinam();
-//        log.info("Response for portfolio check: {}", response);
-//
-//        BalanceData data = response.getData();
-//
-//        Double initialSum = 34142.90;
-//        Double earnedRoubles = data.getEquity() - initialSum;
-//        Double earnedPercents = (data.getEquity() - initialSum) / (initialSum / 100);
-//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
-//        String dateText = "11 02 2024";
-//        LocalDateTime dateStart = LocalDate.parse(dateText, dtf).atStartOfDay();
-//        Long dayCount = ChronoUnit.DAYS.between(dateStart, LocalDateTime.now());
-//        Double yearApproximateProfit = (earnedPercents / dayCount) * 365;
-//
-//        StringBuilder messageText = new StringBuilder("<b>Еженедельный отчет</b>" +
-//                "\n\nТекущий баланс: " + String.format("%.02f", data.getEquity())).append("₽");
-//        messageText.append("\nБаланс на момент перезапуска робота: ").append(String.format("%.02f", initialSum)).append("₽");
-//        messageText.append("\nЗаработано: ").append(String.format("%.02f", earnedRoubles)).append("₽, ")
-//                .append(String.format("%.02f", earnedPercents)).append("%");
-//        messageText.append("\nОжидаемая годовая доходность: ").append(String.format("%.02f", yearApproximateProfit)).append("%");
-//
-//        appendPositionsDescriptionIfTheyExist(data, messageText);
-//
-//        SendMessage message = new SendMessage(chatId, messageText.toString());
-//        message.setParseMode("html");
-//        execute(message);
-//    }
-
-    private static void appendPositionsDescriptionIfTheyExist(BalanceData data, StringBuilder messageText) {
-        log.info("appendPositionsDescriptionIfTheyExist start, data: {}, messageText: {}", data, messageText);
-
-        if (data == null) {
-            log.info("data is null");
-            return;
-        }
-
-        if (!data.getPositions().isEmpty()) {
-            messageText.append("\n\nОткрытые позиции:");
-        }
-
-        for (Position position : data.getPositions()) {
-            messageText.append(String.format("\n\nТикер: %s. Размер позиции: %s" +
-                            "\nПоследняя цена: %s" +
-                            "\nСредняя цена входа: %s" +
-                            "\nДоходность сделки: %s",
-                    position.getSecurityCode(),
-                    position.getBalance(),
-                    String.format("%.02f", position.getCurrentPrice()) + "₽",
-                    String.format("%.02f", position.getAveragePrice()) + "₽",
-                    String.format("%.02f", position.getUnrealizedProfit()) + "₽"));
-        }
-    }
-
-    public void sendMessageWithImage(String path, String caption) throws Exception {
-        log.info("imageSender start with path: {}, caption: {}", path, caption);
-
-        try (InputStream inputStream = new FileInputStream(path)) {
-            String fileName = path.substring(path.lastIndexOf('/') + 1);
-            SendVideo sendVideo = SendVideo.builder()
-                    .chatId(String.valueOf(chatId))
-                    .video(new InputFile(inputStream, fileName))
-                    .caption(caption)
-                    .build();
-            sendVideo.setParseMode("html");
-
-            execute(sendVideo);
         }
     }
 }

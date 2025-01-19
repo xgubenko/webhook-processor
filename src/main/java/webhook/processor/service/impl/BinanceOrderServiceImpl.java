@@ -13,8 +13,6 @@ import webhook.processor.dto.CoinData;
 import webhook.processor.properties.BinanceProperties;
 import webhook.processor.service.BinanceOrderService;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -80,7 +78,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         parameters.put("price", coinData.getPrice() * price);
 
         log.info("Stop loss order: {}", client.account().newOrder(parameters));
-        telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
+        telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), coinData.getQuantity());
     }
 
     public BinancePriceDto getPrice(String code) {
