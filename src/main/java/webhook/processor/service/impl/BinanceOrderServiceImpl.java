@@ -61,42 +61,20 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 
         log.info("Market order: {}", client.account().newOrder(parameters));
 
-        parameters.put("type", "TAKE_PROFIT");
+        parameters.put("type", "TRAILING_STOP_MARKET");
 
         var direction = "BUY";
-        var stopPrice = 1.0 + properties.getStopPrice();
-        if(coinData.getMacd().equals("up")) {
-            direction = "SELL";
-            stopPrice = 1.0 - properties.getStopPrice();
-        }
         var price = 0.999;
-                if(coinData.getMacd().equals("up")) {
+        if(coinData.getMacd().equals("up")) {
             direction = "SELL";
             price = 1.001;
         }
-
         parameters.put("side", direction);
+        parameters.put("callbackRate", properties.getTrailingDelta());
         parameters.put("timeInForce", "GTC");
         parameters.put("price", coinData.getPrice() * price);
-        parameters.put("stopPrice", coinData.getPrice() * stopPrice);
 
         log.info("Stop loss order: {}", client.account().newOrder(parameters));
-
-        //todo remove after testing
-//        parameters.put("type", "TRAILING_STOP_MARKET");
-//
-//        var direction = "BUY";
-//        var price = 0.999;
-//        if(coinData.getMacd().equals("up")) {
-//            direction = "SELL";
-//            price = 1.001;
-//        }
-//        parameters.put("side", direction);
-//        parameters.put("callbackRate", properties.getTrailingDelta());
-//        parameters.put("timeInForce", "GTC");
-//        parameters.put("price", coinData.getPrice() * price);
-//
-//        log.info("Stop loss order: {}", client.account().newOrder(parameters));
         telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
     }
 }
