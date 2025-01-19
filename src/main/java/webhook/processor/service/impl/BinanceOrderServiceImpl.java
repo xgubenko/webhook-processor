@@ -13,6 +13,8 @@ import webhook.processor.dto.CoinData;
 import webhook.processor.properties.BinanceProperties;
 import webhook.processor.service.BinanceOrderService;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -102,14 +104,18 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
      * @return pojo to work with.
      */
     private BinanceTradingViewRequest initRequest(String s, Double budget) {
+        DecimalFormat dec = new DecimalFormat("#0.00");
         var arr = s.split(" ");
+        var price = Double.parseDouble(arr[3]);
+        var quantity = Double.parseDouble(dec.format(budget / price));
+
         return BinanceTradingViewRequest
                 .builder()
                 .code(arr[0])
                 .indicator(arr[1])
                 .indicatorDirection(arr[2])
-                .price(Double.parseDouble(arr[3]))
-                .quantity(budget / Double.parseDouble(arr[3]))
+                .price(price)
+                .quantity(quantity)
                 .build();
     }
 }
