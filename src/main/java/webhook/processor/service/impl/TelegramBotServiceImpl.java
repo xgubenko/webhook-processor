@@ -91,7 +91,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
             SendMessage message = new SendMessage(chatId,
                     "Привет, кожаные ублюдки! Робот был перезапущен.");
-            execute(message);
+//            execute(message);
 
         } catch (TelegramApiException e) {
             log.error("Cant Connect. Pause " + RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.getMessage());
