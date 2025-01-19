@@ -7,6 +7,7 @@ import java.util.Map;
 
 public interface BinanceOrderService {
     void process(String request);
+    void processTest(String request);
 
     Map<String, CoinData> getCoinData();
 

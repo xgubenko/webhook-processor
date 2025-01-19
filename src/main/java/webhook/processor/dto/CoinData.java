@@ -15,16 +15,19 @@ public class CoinData extends PositionState {
     private static final long serialVersionUID = 42L;
     private String hullsuite;
     private String macd;
+    private String macdl;
 
-    public CoinData(String code, Long quantity, Double price, String hullsuite, String macd) {
+    public CoinData(String code, Long quantity, Double price, String hullsuite, String macd, String macdl) {
         super(code, quantity, price);
         this.hullsuite = hullsuite;
         this.macd = macd;
+        this.macdl = macdl;
     }
 
-    public CoinData(String hullsuite, String macd) {
+    public CoinData(String hullsuite, String macd, String macdl) {
         this.hullsuite = hullsuite;
         this.macd = macd;
+        this.macdl = macdl;
     }
 
     @Override
@@ -33,6 +36,7 @@ public class CoinData extends PositionState {
                 "code='" + code + '\'' +
                 ", hullsuite='" + hullsuite + '\'' +
                 ", macd='" + macd + '\'' +
+                ", macdl='" + macd + '\'' +
                 ", quantity=" + quantity +
                 ", price=" + price +
                 '}';

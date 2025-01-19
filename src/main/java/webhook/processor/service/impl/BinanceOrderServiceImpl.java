@@ -44,6 +44,25 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
     }
 
     @Override
+    public void processTest(String tvRequest) {
+        var request = initRequest(tvRequest, properties.getBudget());
+        log.info("Start processing request: {}", request);
+        var coinData = localDataService.updateValue(request);
+
+        var hullsuite = coinData.getHullsuite();
+        var macd = coinData.getMacd();
+        var macdl = coinData.getMacdl();
+        if (hullsuite != null && hullsuite.equals(macd) && hullsuite.equals(macdl)) {
+            localDataService.removeCoin(coinData.getCode());
+            try {
+                createOrder(coinData);
+            } catch (Exception e) {
+                log.error("Request error: {}", e.getMessage());
+            }
+        }
+    }
+
+    @Override
     public Map<String, CoinData> getCoinData() {
         return localDataService.getStorage();
     }

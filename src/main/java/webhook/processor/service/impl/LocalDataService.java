@@ -22,6 +22,7 @@ import java.util.Map;
 public class LocalDataService {
     private final String HULLSUITE = "hullsuite";
     private final String MACD = "macd";
+    private final String MACDL = "macdl";
 
     private final LocalStorageProperties properties;
 
@@ -59,6 +60,9 @@ public class LocalDataService {
         }
         if (indicator.equals(MACD)) {
             data.setMacd(direction);
+        }
+        if (indicator.equals(MACDL)) {
+            data.setMacdl(direction);
         }
         data.setQuantity(quantity);
         data.setCode(ticker);

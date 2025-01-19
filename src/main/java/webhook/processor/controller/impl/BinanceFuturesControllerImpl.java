@@ -24,6 +24,8 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
         this.binanceOrderService = binanceOrderService;
     }
 
+
+
     /**
      * Get information about current state of indicators for each coin.
      *
@@ -57,6 +59,12 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
     @PostMapping(consumes = "text/plain")
     public ResponseEntity<Object> createNewOrder(@RequestBody String request) {
         binanceOrderService.process(request);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping(value = "/test", consumes = "text/plain")
+    public ResponseEntity<Object> createNewOrderTest(@RequestBody String request) {
+        binanceOrderService.processTest(request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
