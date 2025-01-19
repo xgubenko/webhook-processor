@@ -2,11 +2,7 @@ package webhook.processor.controller.impl;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import webhook.processor.controller.WebhookController;
 import webhook.processor.dto.BinanceTradingViewRequest;
 import webhook.processor.dto.CoinData;
@@ -38,6 +34,12 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/price")
+    public ResponseEntity<String> getPrice(@RequestParam String code) {
+        var response = binanceOrderService.getPrice(code);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     //todo implement token check for Binance
     @Override
     public ResponseEntity<Object> checkToken(String request) {
@@ -46,7 +48,7 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
 
     /**
      * Process request from TradingView in the following order: code, quantity, indicator, direction, price.
-     * example: PENGUUSDT 250 macd down 0.355
+     * example: PENGUUSDT macd down
      *
      * @param request - webhook request from TradingView.
      * @return code 200 if no problems occurred.
@@ -67,10 +69,8 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
         return BinanceTradingViewRequest
                 .builder()
                 .code(arr[0])
-                .quantity(Double.parseDouble(arr[1]))
-                .indicator(arr[2])
-                .indicatorDirection(arr[3])
-                .price(Double.parseDouble(arr[4]))
+                .indicator(arr[1])
+                .indicatorDirection(arr[2])
                 .build();
     }
 }

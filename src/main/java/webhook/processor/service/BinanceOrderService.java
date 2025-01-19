@@ -9,4 +9,5 @@ public interface BinanceOrderService {
     void process(BinanceTradingViewRequest request);
 
     Map<String, CoinData> getCoinData();
+    String getPrice(String code);
 }

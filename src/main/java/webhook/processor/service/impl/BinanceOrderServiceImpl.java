@@ -77,4 +77,11 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         log.info("Stop loss order: {}", client.account().newOrder(parameters));
         telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), String.valueOf(coinData.getQuantity()));
     }
+
+    public String getPrice(String code) {
+        FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
+        LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
+        parameters.put("symbol", code);
+        return client.market().tickerSymbol(parameters);
+    }
 }
