@@ -34,7 +34,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         var hullsuite = coinData.getHullsuite();
         var macd = coinData.getMacd();
         if (hullsuite != null && hullsuite.equals(macd)) {
-            localDataService.removeCoin(coinData.getCode());
+//            localDataService.removeCoin(coinData.getCode());
             try {
                 createOrder(coinData);
             } catch (Exception e) {
@@ -53,7 +53,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         var macd = coinData.getMacd();
         var macdl = coinData.getMacdl();
         if (hullsuite != null && hullsuite.equals(macd) && hullsuite.equals(macdl)) {
-            localDataService.removeCoin(coinData.getCode());
+//            localDataService.removeCoin(coinData.getCode());
             try {
                 createOrder(coinData);
             } catch (Exception e) {
