@@ -34,7 +34,6 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         var hullsuite = coinData.getHullsuite();
         var macd = coinData.getMacd();
         if (hullsuite != null && hullsuite.equals(macd)) {
-//            localDataService.removeCoin(coinData.getCode());
             try {
                 createOrder(coinData);
             } catch (Exception e) {
@@ -53,7 +52,6 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         var macd = coinData.getMacd();
         var macdl = coinData.getMacdl();
         if (hullsuite != null && hullsuite.equals(macd) && hullsuite.equals(macdl)) {
-//            localDataService.removeCoin(coinData.getCode());
             try {
                 createOrder(coinData);
             } catch (Exception e) {
@@ -71,7 +69,8 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
 
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
-        parameters.put("symbol", coinData.getCode());
+        var code = coinData.getCode().replaceAll("USDT", "USDC");
+        parameters.put("symbol", code);
 
         var marketDirection = "BUY";
         if(coinData.getMacd().equals("down")) {
