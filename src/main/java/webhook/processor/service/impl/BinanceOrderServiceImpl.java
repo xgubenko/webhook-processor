@@ -69,8 +69,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
 
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
-        var code = coinData.getCode().replaceAll("USDT", "USDC");
-        parameters.put("symbol", code);
+        parameters.put("symbol", coinData.getCode());
 
         var marketDirection = "BUY";
         if(coinData.getMacd().equals("down")) {
