@@ -37,6 +37,17 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * Get information about current state of indicators for each coin.
+     *
+     * @return Map of ticker as a key and its local data as a value.
+     */
+    @DeleteMapping("/coins")
+    public ResponseEntity<Void> getPositionsState(@RequestParam String ticker) {
+        binanceOrderService.removeCoinFromStorage(ticker);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @GetMapping("/price")
     public ResponseEntity<BinancePriceDto> getPrice(@RequestParam String code) {
         var response = binanceOrderService.getPrice(code);
