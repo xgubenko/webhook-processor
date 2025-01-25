@@ -48,6 +48,12 @@ public class BinanceFuturesControllerImpl implements WebhookController<CoinData>
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @GetMapping("/balance")
+    public ResponseEntity<Void> getBalance() {
+        binanceOrderService.getBalance();
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @GetMapping("/price")
     public ResponseEntity<BinancePriceDto> getPrice(@RequestParam String code) {
         var response = binanceOrderService.getPrice(code);

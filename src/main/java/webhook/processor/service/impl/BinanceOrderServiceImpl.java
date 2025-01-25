@@ -70,11 +70,11 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
         localDataService.removeCoin(ticker);
     }
 
-//    @Override
-//    public void getBalance() {
-//        FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
-//        System.out.println(client.account());
-//    }
+    @Override
+    public void getBalance() {
+        FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
+        System.out.println(client.account());
+    }
 
     private void createOrder(CoinData coinData) {
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());

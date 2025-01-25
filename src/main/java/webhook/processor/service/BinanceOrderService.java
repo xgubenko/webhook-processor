@@ -12,6 +12,7 @@ public interface BinanceOrderService {
     Map<String, CoinData> getCoinData();
 
     void removeCoinFromStorage(String ticker);
+    void getBalance();
 
     BinancePriceDto getPrice(String code);
 }
