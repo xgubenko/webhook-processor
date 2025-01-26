@@ -73,7 +73,7 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
     @Override
     public void getBalance() {
         FuturesClientImpl client = new UMFuturesClientImpl(properties.getKey(), properties.getSecret());
-        System.out.println(client.account());
+//        client.account().getIncomeHistory()
     }
 
     private void createOrder(CoinData coinData) {
