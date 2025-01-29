@@ -24,6 +24,6 @@ binance:
   key: ${BINANCE_KEY}
   secret: ${BINANCE_SECRET}
   trailingDelta: ${BINANCE_DELTA:2}
-  budget: 42.0
+  budget: 50.0
 storage:
   file: ${PATH:/storage}
