@@ -20,6 +20,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class LocalDataService {
+
     private final String HULLSUITE = "hullsuite";
     private final String MACD = "macd";
     private final String MACDL = "macdl";
@@ -39,6 +40,10 @@ public class LocalDataService {
 
     public void requestStorageUpdate() {
         this.updateStorage(properties.getFile(), storage);
+    }
+
+    public void updateValue(CoinData coinData) {
+        storage.put(coinData.getCode(), coinData);
     }
 
     public CoinData updateValue(BinanceTradingViewRequest request) {

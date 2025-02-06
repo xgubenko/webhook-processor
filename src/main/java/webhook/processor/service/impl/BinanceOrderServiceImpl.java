@@ -107,6 +107,11 @@ public class BinanceOrderServiceImpl implements BinanceOrderService {
 
         log.info("Stop loss order: {}", client.account().newOrder(parameters));
         telegramBotService.sendActionMessageToGroup(marketDirection, coinData.getCode(), coinData.getQuantity());
+
+        //test 6%
+        coinData.setMacd(null);
+        coinData.setHullsuite(null);
+        localDataService.updateValue(coinData);
     }
 
     public BinancePriceDto getPrice(String code) {
