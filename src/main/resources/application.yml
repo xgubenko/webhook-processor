@@ -23,7 +23,7 @@ finam:
 binance:
   key: ${BINANCE_KEY}
   secret: ${BINANCE_SECRET}
-  trailingDelta: ${BINANCE_DELTA:6}
+  trailingDelta: ${BINANCE_DELTA:2}
   budget: 30.0
 storage:
   file: ${PATH:/storage}
