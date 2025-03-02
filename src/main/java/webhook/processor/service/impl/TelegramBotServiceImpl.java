@@ -83,7 +83,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
                 return;
             } else {
                 // Удаляем сообщение, если это не видео в формате кругов
-                deleteMessage(update.getMessage().getChatId(), update.getMessage().getMessageId());
+                deleteMessage(update.getChannelPost().getChatId(), update.getChannelPost().getMessageId());
             }
 //        } else if (update.hasMessage()) {
 //            // Удаляем любое другое сообщение
