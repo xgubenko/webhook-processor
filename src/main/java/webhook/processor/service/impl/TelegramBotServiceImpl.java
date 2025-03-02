@@ -75,7 +75,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasVideo()) {
+        if (update.hasChannelPost() && update.getChannelPost().hasVideo()) {
             // Проверяем, является ли видео кругом (например, по разрешению)
             // Это условие нужно уточнить в зависимости от ваших требований
 //            if (isCircleVideo(update.getMessage().getVideo())) {
