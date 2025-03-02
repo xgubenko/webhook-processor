@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
@@ -59,18 +60,47 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
         return token;
     }
 
+//    @Override
+//    public void onUpdateReceived(Update update) {
+//        log.info("onUpdateReceived called: {}", update);
+//        String text = update.getMessage().getText();
+//        String id = update.getMessage().getChatId().toString();
+//        SendMessage message = new SendMessage(id, text);
+//        try {
+//            execute(message);
+//        } catch (TelegramApiException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     @Override
     public void onUpdateReceived(Update update) {
-        log.info("onUpdateReceived called: {}", update);
-        String text = update.getMessage().getText();
-        String id = update.getMessage().getChatId().toString();
-        SendMessage message = new SendMessage(id, text);
+        if (update.hasMessage() && update.getMessage().hasVideo()) {
+            // Проверяем, является ли видео кругом (например, по разрешению)
+            // Это условие нужно уточнить в зависимости от ваших требований
+//            if (isCircleVideo(update.getMessage().getVideo())) {
+                // Если видео круг, оставляем его
+                return;
+            } else {
+                // Удаляем сообщение, если это не видео в формате кругов
+                deleteMessage(update.getMessage().getChatId(), update.getMessage().getMessageId());
+            }
+//        } else if (update.hasMessage()) {
+//            // Удаляем любое другое сообщение
+//            deleteMessage(update.getMessage().getChatId(), update.getMessage().getMessageId());
+//        }
+    }
+
+    private void deleteMessage(Long chatId, Integer messageId) {
         try {
-            execute(message);
+            DeleteMessage deleteMessage = new DeleteMessage(chatId.toString(), messageId);
+            execute(deleteMessage);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
+
+
 
     public void botConnect() throws TelegramApiException, ExecutionException, InterruptedException {
         log.info("botConnect start");
@@ -81,7 +111,7 @@ public class TelegramBotServiceImpl extends TelegramLongPollingBot {
 
             SendMessage message = new SendMessage(chatId,
                     "Привет, кожаные ублюдки! Робот был перезапущен.");
-            execute(message);
+//            execute(message);
 
         } catch (TelegramApiException e) {
             log.error("Cant Connect. Pause " + RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.getMessage());
